@@ -2,223 +2,172 @@
 
 ## 1. Brand Identity
 
-**Purpose**: A social platform where users curate their cultural identity across films, series, music, anime, manga, and books in one unified profile.
+**Purpose**: A unified social platform where users curate their cultural identity across films, series, music, anime, manga, and books in one polished profile.
 
-**Aesthetic Direction**: Editorial/Magazine meets Modern Social
-- Clean, content-first layouts with strong typographic hierarchy
-- Sophisticated yet approachable
-- Emphasis on user-generated content and curation
-- Minimal decorative elements - let the cultural content shine
+**Aesthetic Direction**: Fluid Dark Editorial with Intelligent Glass Effects
+- Deep dark backgrounds (#0D0D0D) with glowing cyan accents
+- Glass-morphism cards with subtle frosted effects
+- Soft shadows throughout for depth
+- Horizontal content carousels emphasizing visual curation
+- Profile-centric with prominent stats
+- Minimalist icons only—no photos in UI chrome
 
-**Memorable Element**: The unified cultural profile as a personal "cultural portfolio" - a single hub for all media consumption.
+**Memorable Element**: The glowing cyan floating action button against deep black, and the unified cultural profile displaying all media consumption in one elegant timeline.
 
 ## 2. Navigation Architecture
 
 **Root Navigation**: Tab Bar (4 tabs + Floating Action Button)
 
 Tabs:
-1. **Home** (Feed icon) - Social feed with posts and launches
-2. **Search** (Search icon) - Global search across all media types
-3. **Create** (Plus icon, Floating Action Button) - Create new post
-4. **Profile** (User icon) - User profile with tabs
-
-All screens use stack navigation within their respective tabs.
+1. **Home** (house icon) - Timeline feed with posts and releases
+2. **Discover** (compass icon) - Browse media with horizontal carousels
+3. **Create** (plus icon, cyan Floating Action Button) - Create post
+4. **Profile** (user icon) - Stats-focused profile with tabs
 
 ## 3. Screen-by-Screen Specifications
 
-### 3.1 Authentication Screens
-
+### Authentication
 **Login Screen**
-- Layout: Centered form on scrollable view
-- Components:
-  - App logo/wordmark at top
-  - Email input field
-  - Password input field
-  - "Login" button (full width)
-  - "Don't have an account? Sign up" text link
+- Layout: Centered form on scrollable dark view
+- Components: App wordmark, email field, password field, "Sign In with Apple" button (primary), "Sign In with Google" button, "Create Account" link
 - Top inset: insets.top + Spacing.xl
 - Bottom inset: insets.bottom + Spacing.xl
 
 **Signup Screen**
-- Similar to Login with additional name field
-- Privacy policy and terms links below button
+- Similar to Login with name field, privacy/terms links below
 
-### 3.2 Home (Feed) Tab
-
+### Home Tab
 **Home Screen**
-- Header: Transparent, app wordmark centered, no back button
+- Header: Transparent, app wordmark centered
 - Layout: Vertical scrollable feed (FlatList)
 - Components:
-  - Section header "Latest Releases" with subtle divider
-  - Horizontal carousel of new releases (auto-generated posts)
-  - Section header "Community Posts"
-  - Vertical list of user posts
-  - Each post card contains:
-    - User avatar + name + timestamp
-    - Media thumbnail (left) + title + type badge
-    - Star rating display
-    - Comment text (truncated if long)
-    - Comment count icon + count
-- Empty State: "empty-feed.png" illustration with "Start following users or create your first post"
+  - "New Releases" section with horizontal scrolling carousel of gradient cards (each showing media thumbnail, title, type badge)
+  - "Your Timeline" section with vertical post cards
+  - Post card: User avatar + name, media thumbnail (left), title + type, star rating, comment text, like/comment counts
+- Empty State: empty-timeline.png
 - Top inset: headerHeight + Spacing.xl
 - Bottom inset: tabBarHeight + Spacing.xl
 
-**Post Detail Screen** (Modal)
-- Header: Default with back button, "Post" title
+**Post Detail Screen** (Stack)
+- Header: Default with back, "Post" title
 - Layout: Scrollable
-- Components:
-  - Full post card (expanded)
-  - Comments list below
-  - Comment input at bottom (sticky)
+- Components: Expanded post card, comments list, comment input (sticky bottom)
+- Glass effect card with soft shadow
 - Bottom inset: insets.bottom + Spacing.xl
 
-### 3.3 Search Tab
-
-**Search Screen**
-- Header: Large search bar, transparent background
-- Layout: Scrollable results list
+### Discover Tab
+**Discover Screen**
+- Header: Transparent, search icon (right)
+- Layout: Scrollable with sections
 - Components:
-  - Search input with filter chips below (Film, Series, Music, Anime, Manga, Books, All)
-  - Results as media cards with thumbnail + title + year + type badge
-- Empty State (no search): "empty-search.png" illustration with "Search across all media types"
-- Empty State (no results): "no-results.png" illustration
+  - Category chips row (Films, Series, Music, Anime, Manga, Books)
+  - Each category: horizontal carousel of gradient media cards
+  - "Trending" section, "Top Rated" section
+- Empty State: Not needed (always has content)
 - Top inset: headerHeight + Spacing.xl
 - Bottom inset: tabBarHeight + Spacing.xl
 
-**Media Detail Screen**
-- Header: Transparent, back button, share button (right)
+**Media Detail Screen** (Stack)
+- Header: Transparent, back button, share icon (right)
 - Layout: Scrollable
 - Components:
-  - Hero section: Large thumbnail, title, year, genres
-  - Stats row: Community average rating, number of reviews
-  - Action buttons row:
-    - "Rate & Review" (primary button)
-    - Status dropdown (Want/Consuming/Completed)
-    - "Add to List" icon button
-  - Description text
-  - Community reviews section
+  - Hero: Large thumbnail with gradient overlay, title, year
+  - Stats row: Avg rating, review count
+  - Actions: "Rate & Review" (cyan button), status dropdown (Want/Consuming/Completed), "Add to List" icon
+  - Description, community reviews section
+- Glass effect sections with soft shadows
 - Top inset: headerHeight + Spacing.xl
 - Bottom inset: insets.bottom + Spacing.xl
 
-### 3.4 Create (Floating Action Button)
+**Search Screen** (Stack)
+- Header: Large search bar, back button
+- Layout: Results list (scrollable)
+- Components: Search input, filter chips, results as media cards
+- Empty State: empty-search.png (no search), no-results.png (no results)
+- Top inset: headerHeight + Spacing.xl
+- Bottom inset: insets.bottom + Spacing.xl
 
+### Create (Floating Action Button)
 **Create Post Modal**
-- Presented as full-screen modal
-- Header: "Cancel" (left), "Create Post" title, "Publish" (right, disabled until valid)
-- Layout: Scrollable form
-- Components:
-  - Media type selector (horizontal chips)
-  - Search input to find media
-  - Selected media preview card
-  - Star rating input (5 stars)
-  - Multi-line text input for comment
+- Full-screen modal, glass effect background
+- Header: "Cancel" (left), "Create" title, "Publish" (right, cyan when valid)
+- Components: Media type chips, search media input, selected media preview, star rating (5 stars, cyan), comment text area
 - Top inset: Spacing.xl
 - Bottom inset: insets.bottom + Spacing.xl
 
-### 3.5 Profile Tab
-
+### Profile Tab
 **Profile Screen**
-- Header: Transparent, settings button (right), no title
-- Layout: Scrollable with nested tabs
+- Header: Transparent, settings icon (right)
+- Layout: Scrollable with stats header + tabs
 - Components:
-  - Profile header:
-    - Avatar (large, centered)
-    - Name
-    - Bio
-    - Stats row (Posts count, Reviews count)
+  - Profile header: Large avatar, name, bio, stats cards (Posts, Reviews, Followers, Following in glass cards)
   - Tab selector: Posts | Reviews | Lists | Status
-  - Content area changes based on selected tab
+  - Content grid below tabs
 - Top inset: headerHeight + Spacing.xl
 - Bottom inset: tabBarHeight + Spacing.xl
+- Empty States: empty-posts.png, empty-reviews.png, empty-lists.png, empty-status.png
 
-**Profile Tab: Posts**
-- Vertical list of user's posts (same card as feed)
-- Empty State: "empty-posts.png"
-
-**Profile Tab: Reviews**
-- Grid of media thumbnails with star overlay
-- Empty State: "empty-reviews.png"
-
-**Profile Tab: Lists**
-- Vertical list of custom lists
-- "Create New List" button at top
-- Each list shows name, item count, preview thumbnails
-- Empty State: "empty-lists.png"
-
-**Profile Tab: Status**
-- Three sections: Want, Consuming, Completed
-- Collapsible sections
-- Grid of thumbnails
-- Empty State: "empty-status.png"
-
-**List Detail Screen**
-- Header: Default, back button, "Edit" button (right)
-- Layout: Scrollable
-- Components:
-  - List name + description
-  - Grid of media items
-  - Empty state if no items
-- Bottom inset: insets.bottom + Spacing.xl
-
-**Settings Screen**
-- Header: Default, back button, "Settings" title
-- Layout: Scrollable form
-- Components:
-  - Section: Account (Name, Email, Avatar upload, Bio)
-  - Section: Preferences (Theme toggle, Notifications)
-  - Section: Account Actions (Log out, Delete account nested)
+**Settings Screen** (Stack)
+- Header: Default, back, "Settings" title
+- Layout: Scrollable form with glass sections
+- Components: Account section (name, email, avatar, bio), Preferences (theme, notifications), Account Actions (Log Out with confirmation, Delete Account nested with double confirmation)
 
 ## 4. Color Palette
 
-**Primary**: #E63946 (Vibrant Red) - Editorial accent, CTAs, ratings
-**Secondary**: #1D3557 (Deep Navy) - Headers, primary text
-**Accent**: #457B9D (Muted Blue) - Links, secondary actions
-**Background**: #F1FAEE (Off-White Cream) - Main background
-**Surface**: #FFFFFF (White) - Cards, modals
-**Text Primary**: #1D3557
-**Text Secondary**: #A8DADC (Soft Teal)
-**Border**: #E5E5E5
-**Success**: #06D6A0
-**Warning**: #F77F00
+**Background**: #0D0D0D (Deep Black)
+**Surface**: #1A1A1A (Dark Gray) - Cards, glass overlays
+**Primary Accent**: #00D9FF (Cyan) - FAB, CTAs, ratings, links
+**Secondary Accent**: #6C63FF (Purple) - Gradients, badges
+**Text Primary**: #FFFFFF (White)
+**Text Secondary**: #9CA3AF (Gray)
+**Border**: #2A2A2A (Subtle Dark)
+**Success**: #10B981
+**Warning**: #F59E0B
+**Error**: #EF4444
+
+Gradient overlays: Linear from Primary Accent to Secondary Accent
 
 ## 5. Typography
 
-**Primary Font**: Montserrat (Google Font) - Bold, modern, editorial
-**Secondary Font**: Inter (Google Font) - Clean, legible body text
+**Primary Font**: Satoshi (Google Font alternative: Plus Jakarta Sans) - Modern, fluid, geometric
+**Secondary Font**: Inter - Clean body text
 
 **Type Scale**:
-- Hero: Montserrat Bold, 32px
-- Title: Montserrat Bold, 24px
-- Heading: Montserrat SemiBold, 18px
+- Hero: Satoshi Bold, 32px
+- Title: Satoshi Bold, 24px
+- Heading: Satoshi SemiBold, 18px
 - Body: Inter Regular, 16px
-- Caption: Inter Regular, 14px
+- Caption: Inter Medium, 14px
 - Small: Inter Regular, 12px
 
 ## 6. Visual Design
 
-- Use Feather icons from @expo/vector-icons
-- Touchables have 10% opacity reduction on press
-- Cards have subtle border, no shadow
-- Floating Action Button (Create): Use drop shadow (shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.10, shadowRadius: 2)
-- Star ratings use filled/outlined star icons in Primary color
-- Media type badges use small chip style with type-specific colors
+- Icons: Feather icons from @expo/vector-icons
+- Glass Effect: backgroundColor with 10% opacity, blur overlay effect
+- Soft Shadows: shadowOffset {width: 0, height: 4}, shadowOpacity: 0.20, shadowRadius: 8
+- Floating Action Button (Create): Cyan background, white plus icon, shadow: {width: 0, height: 2}, shadowOpacity: 0.10, shadowRadius: 2
+- Touchables: 15% opacity reduction on press
+- Cards: Glass effect with soft shadow
+- Star Ratings: Filled/outlined stars in cyan
+- Type Badges: Small pills with gradient background
+- Category Cards: Gradient from cyan to purple
 
 ## 7. Assets to Generate
 
 **App Identity**:
-- `icon.png` - App icon with stylized cultural media grid
-- `splash-icon.png` - Launch screen icon
+- `icon.png` - App icon: Stylized cultural grid with cyan accent (used: device home screen)
+- `splash-icon.png` - Simplified icon version (used: app launch)
 
 **Empty States**:
-- `empty-feed.png` - Minimalist illustration of empty feed (used: Home screen when no posts)
-- `empty-search.png` - Magnifying glass with media icons (used: Search screen initial state)
-- `no-results.png` - Simple "not found" visual (used: Search screen no results)
-- `empty-posts.png` - Post icon outline (used: Profile Posts tab)
+- `empty-timeline.png` - Minimal timeline illustration with cyan accents (used: Home screen, no posts)
+- `empty-search.png` - Magnifying glass with floating media icons (used: Search screen, initial state)
+- `no-results.png` - Simple "not found" visual (used: Search screen, no results)
+- `empty-posts.png` - Post icon outline in cyan (used: Profile Posts tab)
 - `empty-reviews.png` - Star rating outline (used: Profile Reviews tab)
 - `empty-lists.png` - List icon outline (used: Profile Lists tab)
 - `empty-status.png` - Bookmark outline (used: Profile Status tab)
 
 **User Avatars** (presets):
-- `avatar-1.png` through `avatar-5.png` - Abstract geometric avatars in brand colors
+- `avatar-1.png` through `avatar-5.png` - Abstract gradient avatars (cyan to purple gradients)
 
-All illustrations should use the brand color palette (red, navy, muted blue) with simple, clean line art style—no photographic elements.
+All illustrations: Dark backgrounds, cyan/purple gradient accents, minimal line art, glass effect aesthetic.
