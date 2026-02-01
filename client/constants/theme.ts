@@ -73,41 +73,49 @@ export const BorderRadius = {
 
 export const Typography = {
   h1: {
+    fontFamily: "Poppins_700Bold",
     fontSize: 32,
     lineHeight: 40,
     fontWeight: "700" as const,
   },
   h2: {
+    fontFamily: "Poppins_700Bold",
     fontSize: 28,
     lineHeight: 36,
     fontWeight: "700" as const,
   },
   h3: {
+    fontFamily: "Poppins_600SemiBold",
     fontSize: 24,
     lineHeight: 32,
     fontWeight: "600" as const,
   },
   h4: {
+    fontFamily: "Poppins_600SemiBold",
     fontSize: 20,
     lineHeight: 28,
     fontWeight: "600" as const,
   },
   body: {
+    fontFamily: "Poppins_400Regular",
     fontSize: 16,
     lineHeight: 24,
     fontWeight: "400" as const,
   },
   small: {
+    fontFamily: "Poppins_400Regular",
     fontSize: 14,
     lineHeight: 20,
     fontWeight: "400" as const,
   },
   caption: {
+    fontFamily: "Poppins_500Medium",
     fontSize: 12,
     lineHeight: 16,
     fontWeight: "500" as const,
   },
   link: {
+    fontFamily: "Poppins_400Regular",
     fontSize: 16,
     lineHeight: 24,
     fontWeight: "400" as const,

@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     paddingVertical: Spacing.xs,
+    fontFamily: "Poppins_400Regular",
   },
   rightElement: {
     marginLeft: Spacing.sm,
