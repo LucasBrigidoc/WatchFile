@@ -100,7 +100,7 @@ export default function ProfileScreen() {
               <PostCard
                 key={post.id}
                 id={post.id}
-                user={{ ...post.user, name: "You" }}
+                user={{ name: name, avatarUrl: avatarUrl }}
                 media={post.media}
                 rating={post.rating}
                 comment={post.comment}
