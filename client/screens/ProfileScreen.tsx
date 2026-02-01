@@ -4,7 +4,6 @@ import {
   View,
   ScrollView,
   Pressable,
-  FlatList,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -20,6 +19,7 @@ import { GlassCard } from "@/components/GlassCard";
 import { EmptyState } from "@/components/EmptyState";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ProfileTab = "posts" | "reviews" | "lists" | "status";
 
@@ -80,11 +80,16 @@ const MOCK_LISTS = [
 ];
 
 export default function ProfileScreen() {
+  const { user } = useAuth();
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<ProfileTab>("posts");
+
+  const name = user?.name || "User";
+  const bio = user?.bio || "No bio yet";
+  const avatarUrl = user?.avatarUrl;
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -95,7 +100,7 @@ export default function ProfileScreen() {
               <PostCard
                 key={post.id}
                 id={post.id}
-                user={post.user}
+                user={{ ...post.user, name: "You" }}
                 media={post.media}
                 rating={post.rating}
                 comment={post.comment}
@@ -227,20 +232,20 @@ export default function ProfileScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.header}>
-        <Avatar size={80} />
+        <Avatar size={80} src={avatarUrl} />
         <ThemedText type="h3" style={styles.name}>
-          Lucas Brigido
+          {name}
         </ThemedText>
         <ThemedText
           type="small"
           style={[styles.bio, { color: theme.textSecondary }]}
         >
-          Film enthusiast & music lover
+          {bio}
         </ThemedText>
 
         <View style={styles.stats}>
           <StatCard value={0} label="Reviews" />
-          <StatCard value={2} label="Ratings" />
+          <StatCard value={0} label="Ratings" />
           <StatCard value={0} label="Followers" />
         </View>
 
