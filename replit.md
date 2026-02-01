@@ -9,5 +9,6 @@
 - [x] Configurar credenciais do Spotify
 - [x] Configurar chave da API do TMDB
 - [ ] Implementar serviço de busca de músicas (Spotify)
-- [ ] Implementar rota de filmes (TMDB)
+- [x] Implementar rota de filmes (TMDB)
+- [x] Integrar busca de filmes e séries no frontend
 - [ ] Integrar API de Livros

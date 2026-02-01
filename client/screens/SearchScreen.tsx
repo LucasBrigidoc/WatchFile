@@ -1,10 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
   FlatList,
   Pressable,
   TextInput as RNTextInput,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -29,41 +30,6 @@ const FILTERS: { key: MediaType; label: string }[] = [
   { key: "book", label: "Books" },
 ];
 
-const MOCK_RESULTS = [
-  {
-    id: "s1",
-    title: "Dune: Part Two",
-    imageUrl: "https://picsum.photos/seed/dune2/400/600",
-    type: "film" as const,
-    year: "2024",
-    rating: 4.5,
-  },
-  {
-    id: "s2",
-    title: "Blonde - Frank Ocean",
-    imageUrl: "https://picsum.photos/seed/blonde3/400/400",
-    type: "music" as const,
-    year: "2016",
-    rating: 5,
-  },
-  {
-    id: "s3",
-    title: "Attack on Titan: Final Season",
-    imageUrl: "https://picsum.photos/seed/aot2/400/600",
-    type: "anime" as const,
-    year: "2023",
-    rating: 4.8,
-  },
-  {
-    id: "s4",
-    title: "One Piece",
-    imageUrl: "https://picsum.photos/seed/onepiece/400/600",
-    type: "manga" as const,
-    year: "1997",
-    rating: 4.9,
-  },
-];
-
 export default function SearchScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -72,16 +38,60 @@ export default function SearchScreen() {
   const [query, setQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<MediaType>("all");
   const [hasSearched, setHasSearched] = useState(false);
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const results = query.length > 0 ? MOCK_RESULTS : [];
+  const searchMovies = async (searchQuery: string) => {
+    if (!searchQuery.trim()) {
+      setResults([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/movies/search?q=${encodeURIComponent(searchQuery)}`);
+      const data = await response.json();
+      
+      if (data.results) {
+        const mappedResults = data.results.map((item: any) => ({
+          id: item.id.toString(),
+          title: item.title || item.name,
+          imageUrl: item.poster_path 
+            ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+            : "https://via.placeholder.com/400x600?text=No+Image",
+          type: item.media_type === "movie" ? "film" : "series",
+          year: (item.release_date || item.first_air_date || "").split("-")[0],
+          rating: item.vote_average / 2, // TMDB is 0-10, we use 0-5
+        }));
+        setResults(mappedResults);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (query.length > 2) {
+        searchMovies(query);
+      } else if (query.length === 0) {
+        setResults([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const handleSearch = () => {
     if (query.trim()) {
       setHasSearched(true);
+      searchMovies(query);
     }
   };
 
-  const renderResult = ({ item }: { item: (typeof MOCK_RESULTS)[0] }) => (
+  const renderResult = ({ item }: { item: any }) => (
     <MediaCard
       id={item.id}
       title={item.title}
@@ -94,6 +104,14 @@ export default function SearchScreen() {
   );
 
   const renderEmptyState = () => {
+    if (loading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.accent} />
+        </View>
+      );
+    }
+
     if (!hasSearched && !query) {
       return (
         <EmptyState
@@ -103,7 +121,7 @@ export default function SearchScreen() {
         />
       );
     }
-    if (query && results.length === 0) {
+    if (query && results.length === 0 && !loading) {
       return (
         <EmptyState
           type="search"
@@ -233,5 +251,9 @@ const styles = StyleSheet.create({
   },
   emptyContent: {
     flexGrow: 1,
+  },
+  loadingContainer: {
+    padding: Spacing.xl,
+    alignItems: "center",
   },
 });
