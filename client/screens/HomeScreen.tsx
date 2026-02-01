@@ -108,24 +108,6 @@ export default function HomeScreen() {
 
   const renderHeader = () => (
     <View style={styles.headerContent}>
-      <View
-        style={[
-          styles.postInput,
-          {
-            backgroundColor: theme.backgroundDefault,
-            borderColor: theme.border,
-          },
-        ]}
-      >
-        <Avatar size={32} />
-        <TextInput
-          placeholder="What have you been watching?"
-          placeholderTextColor={theme.textSecondary}
-          style={[styles.input, { color: theme.text }]}
-          editable={false}
-        />
-      </View>
-
       <SectionHeader title="Popular This Week" />
       <ScrollView
         horizontal
