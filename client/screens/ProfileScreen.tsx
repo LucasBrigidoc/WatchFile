@@ -225,7 +225,7 @@ export default function ProfileScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: insets.top + Spacing.lg,
+            paddingTop: insets.top + Spacing.xl,
             paddingBottom: tabBarHeight + Spacing.xl,
           },
         ]}
@@ -297,7 +297,6 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     marginBottom: Spacing["2xl"],
-    marginTop: Spacing.md,
   },
   name: {
     marginTop: Spacing.md,
@@ -309,13 +308,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: Spacing.md,
     marginTop: Spacing.xl,
-  },
-  editButton: {
-    paddingHorizontal: Spacing["3xl"],
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    marginTop: Spacing.lg,
   },
   tabs: {
     flexDirection: "row",
