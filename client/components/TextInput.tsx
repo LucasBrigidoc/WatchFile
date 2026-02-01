@@ -96,6 +96,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: Spacing.xs,
     fontFamily: "Poppins_400Regular",
+    // @ts-ignore - web only property to remove focus outline
+    outlineStyle: "none",
   },
   rightElement: {
     marginLeft: Spacing.sm,
