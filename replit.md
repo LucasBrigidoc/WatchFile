@@ -6,6 +6,8 @@
 ## Progresso da Migração
 - [x] Instalar pacotes iniciais
 - [x] Verificar workflows
-- [ ] Configurar credenciais do Spotify
+- [x] Configurar credenciais do Spotify
+- [x] Configurar chave da API do TMDB
 - [ ] Implementar serviço de busca de músicas (Spotify)
-- [ ] Integrar APIs de Filmes e Livros
+- [ ] Implementar rota de filmes (TMDB)
+- [ ] Integrar API de Livros

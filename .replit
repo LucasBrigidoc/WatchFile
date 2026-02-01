@@ -73,3 +73,8 @@ task = "shell.exec"
 args = "npm run expo:dev"
 waitForPort = 8081
 ensurePreviewReachable = "/status"
+
+[userenv]
+
+[userenv.shared]
+TMDB_API_KEY = "9c7b37bc475512c26d633793d03146c4"
