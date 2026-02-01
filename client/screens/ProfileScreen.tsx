@@ -249,20 +249,6 @@ export default function ProfileScreen() {
             <StatCard value={0} label="Ratings" />
             <StatCard value={0} label="Followers" />
           </View>
-
-          <Pressable
-            style={[
-              styles.editButton,
-              {
-                backgroundColor: theme.backgroundDefault,
-                borderColor: theme.border,
-              },
-            ]}
-          >
-            <ThemedText type="body" style={{ fontWeight: "600" }}>
-              Edit Profile
-            </ThemedText>
-          </Pressable>
         </View>
 
         <View style={styles.tabs}>
