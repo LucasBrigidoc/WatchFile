@@ -136,6 +136,14 @@ export default function SearchScreen() {
     return null;
   };
 
+  const filteredResults = results.filter((item) => {
+    if (selectedFilter === "all") return true;
+    if (selectedFilter === "film") return item.type === "film";
+    if (selectedFilter === "series") return item.type === "series";
+    // Add other types as they are implemented (music, anime, etc)
+    return item.type === selectedFilter;
+  });
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
@@ -201,12 +209,12 @@ export default function SearchScreen() {
       </View>
 
       <FlatList
-        data={results}
+        data={filteredResults}
         renderItem={renderResult}
         keyExtractor={(item) => item.id}
         contentContainerStyle={[
           styles.content,
-          results.length === 0 && styles.emptyContent,
+          filteredResults.length === 0 && styles.emptyContent,
         ]}
         scrollIndicatorInsets={{ bottom: insets.bottom }}
         ListEmptyComponent={renderEmptyState}
