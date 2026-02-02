@@ -43,6 +43,7 @@ export default function ProfileStackNavigator() {
         options={{
           headerTitle: "",
           headerShown: false,
+          animation: "none",
         }}
       />
       <Stack.Screen
@@ -51,6 +52,7 @@ export default function ProfileStackNavigator() {
         options={{
           headerTitle: "Settings",
           headerLeft: () => null,
+          animation: "none",
         }}
       />
     </Stack.Navigator>
