@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
@@ -19,13 +20,13 @@ interface EmptyStateProps {
   message: string;
 }
 
-const images: Record<EmptyStateType, any> = {
-  timeline: require("../../assets/images/empty-timeline.png"),
-  search: require("../../assets/images/empty-search.png"),
-  posts: require("../../assets/images/empty-posts.png"),
-  reviews: require("../../assets/images/empty-reviews.png"),
-  lists: require("../../assets/images/empty-lists.png"),
-  status: require("../../assets/images/empty-posts.png"),
+const icons: Record<EmptyStateType, keyof typeof Feather.glyphMap> = {
+  timeline: "layers",
+  search: "search",
+  posts: "edit-3",
+  reviews: "star",
+  lists: "list",
+  status: "info",
 };
 
 export function EmptyState({ type, title, message }: EmptyStateProps) {
@@ -33,7 +34,9 @@ export function EmptyState({ type, title, message }: EmptyStateProps) {
 
   return (
     <View style={styles.container}>
-      <Image source={images[type]} style={styles.image} resizeMode="contain" />
+      <View style={[styles.iconContainer, { backgroundColor: theme.backgroundDefault }]}>
+        <Feather name={icons[type]} size={48} color={theme.accent} />
+      </View>
       <ThemedText type="h4" style={styles.title}>
         {title}
       </ThemedText>
@@ -55,9 +58,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing["3xl"],
     paddingVertical: Spacing["4xl"],
   },
-  image: {
-    width: 180,
-    height: 180,
+  iconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: Spacing.xl,
   },
   title: {
