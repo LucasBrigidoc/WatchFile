@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-const accentCyan = "#00D9FF";
+const accentNeonBlue = "#007BFF";
 const accentPurple = "#6C63FF";
 
 export const Colors = {
@@ -9,9 +9,9 @@ export const Colors = {
     textSecondary: "#9CA3AF",
     buttonText: "#0D0D0D",
     tabIconDefault: "#6B7280",
-    tabIconSelected: accentCyan,
-    link: accentCyan,
-    accent: accentCyan,
+    tabIconSelected: accentNeonBlue,
+    link: accentNeonBlue,
+    accent: accentNeonBlue,
     accentSecondary: accentPurple,
     backgroundRoot: "#0D0D0D",
     backgroundDefault: "#1A1A1A",
@@ -21,7 +21,7 @@ export const Colors = {
     success: "#10B981",
     warning: "#F59E0B",
     error: "#EF4444",
-    star: accentCyan,
+    star: accentNeonBlue,
     glass: "rgba(26, 26, 26, 0.8)",
   },
   dark: {
@@ -29,9 +29,9 @@ export const Colors = {
     textSecondary: "#9CA3AF",
     buttonText: "#0D0D0D",
     tabIconDefault: "#6B7280",
-    tabIconSelected: accentCyan,
-    link: accentCyan,
-    accent: accentCyan,
+    tabIconSelected: accentNeonBlue,
+    link: accentNeonBlue,
+    accent: accentNeonBlue,
     accentSecondary: accentPurple,
     backgroundRoot: "#0D0D0D",
     backgroundDefault: "#1A1A1A",
@@ -41,7 +41,7 @@ export const Colors = {
     success: "#10B981",
     warning: "#F59E0B",
     error: "#EF4444",
-    star: accentCyan,
+    star: accentNeonBlue,
     glass: "rgba(26, 26, 26, 0.8)",
   },
 };
@@ -138,7 +138,7 @@ export const Shadows = {
     elevation: 2,
   },
   fab: {
-    shadowColor: "#00D9FF",
+    shadowColor: "#007BFF",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -147,8 +147,8 @@ export const Shadows = {
 };
 
 export const Gradients = {
-  primary: ["#5087ff", "#5087ff"],
-  card: ["rgba(80, 135, 255, 0.15)", "rgba(80, 135, 255, 0.15)"],
+  primary: ["#007BFF", "#007BFF"],
+  card: ["rgba(0, 123, 255, 0.15)", "rgba(0, 123, 255, 0.15)"],
 };
 
 export const Fonts = Platform.select({
