@@ -305,18 +305,6 @@ const styles = StyleSheet.create({
   banner: {
     flex: 1,
   },
-  settingsButtonWrapper: {
-    position: "absolute",
-    right: Spacing.md,
-    zIndex: 10,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   scrollView: {
     flex: 1,
   },

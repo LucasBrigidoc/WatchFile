@@ -105,7 +105,10 @@ function TabBarWithFAB({
 
             return (
               <React.Fragment key={route.key}>
-                <Pressable onPress={onPress} style={styles.tabItem}>
+                <Pressable
+                  onPress={() => tabNavigation.navigate("ProfileTab")}
+                  style={styles.tabItem}
+                >
                   <Feather
                     name="user"
                     size={26}
@@ -113,7 +116,7 @@ function TabBarWithFAB({
                   />
                 </Pressable>
                 <Pressable
-                  onPress={() => navigation.navigate("Settings")}
+                  onPress={() => tabNavigation.navigate("ProfileTab", { screen: "Settings" })}
                   style={[styles.tabItem, styles.settingsIcon]}
                 >
                   <Feather
