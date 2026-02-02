@@ -160,7 +160,7 @@ export default function SearchScreen() {
     if (selectedFilter === "all") return true;
     if (selectedFilter === "film") return item.type === "film";
     if (selectedFilter === "series") return item.type === "series";
-    // Add other types as they are implemented (music, anime, etc)
+    if (selectedFilter === "book") return item.type === "book";
     return item.type === selectedFilter;
   });
 

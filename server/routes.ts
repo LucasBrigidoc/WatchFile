@@ -63,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await fetch(
         `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
           query as string
-        )}&key=${apiKey}&maxResults=20&language=pt`
+        )}&key=${apiKey}&maxResults=20`
       );
 
       if (!response.ok) {
