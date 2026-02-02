@@ -89,45 +89,26 @@ function TabBarWithFAB({
         </View>
 
         <View style={styles.profileTabWrapper}>
-          {state.routes.slice(3).map((route: any, index: number) => {
-            const actualIndex = index + 3;
-            const isFocused = state.index === actualIndex;
-            const onPress = () => {
-              const event = tabNavigation.emit({
-                type: "tabPress",
-                target: route.key,
-                canPreventDefault: true,
-              });
-              if (!isFocused && !event.defaultPrevented) {
-                tabNavigation.navigate(route.name);
-              }
-            };
-
-            return (
-              <React.Fragment key={route.key}>
-                <Pressable
-                  onPress={() => tabNavigation.navigate("ProfileTab")}
-                  style={styles.tabItem}
-                >
-                  <Feather
-                    name="user"
-                    size={26}
-                    color={state.index === 2 ? theme.accent : theme.tabIconDefault}
-                  />
-                </Pressable>
-                <Pressable
-                  onPress={() => navigation.navigate("Settings")}
-                  style={[styles.tabItem, styles.settingsIcon]}
-                >
-                  <Feather
-                    name="settings"
-                    size={26}
-                    color={state.index === 3 ? theme.accent : theme.tabIconDefault}
-                  />
-                </Pressable>
-              </React.Fragment>
-            );
-          })}
+          <Pressable
+            onPress={() => tabNavigation.navigate("ProfileTab")}
+            style={styles.tabItem}
+          >
+            <Feather
+              name="user"
+              size={26}
+              color={state.index === 3 ? theme.accent : theme.tabIconDefault}
+            />
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate("Settings")}
+            style={[styles.tabItem, styles.settingsIcon]}
+          >
+            <Feather
+              name="settings"
+              size={26}
+              color={state.index === 4 ? theme.accent : theme.tabIconDefault}
+            />
+          </Pressable>
         </View>
       </View>
     </View>
