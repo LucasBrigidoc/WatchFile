@@ -50,6 +50,7 @@ export default function ProfileStackNavigator() {
         component={SettingsScreen}
         options={{
           headerTitle: "Settings",
+          headerLeft: () => null,
         }}
       />
     </Stack.Navigator>
