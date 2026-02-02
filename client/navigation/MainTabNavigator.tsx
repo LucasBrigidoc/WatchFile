@@ -101,7 +101,7 @@ function TabBarWithFAB({
                 {isProfile && (
                   <Feather
                     name="settings"
-                    size={20}
+                    size={24}
                     color={theme.tabIconDefault}
                     style={styles.settingsIcon}
                     onPress={() => navigation.navigate("Settings")}
@@ -192,9 +192,10 @@ const styles = StyleSheet.create({
   profileTabWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    justifyContent: "center",
+    gap: 24,
   },
   settingsIcon: {
-    marginLeft: 4,
+    // No extra margin needed with gap
   },
 });
