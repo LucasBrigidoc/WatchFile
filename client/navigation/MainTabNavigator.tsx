@@ -112,17 +112,17 @@ function TabBarWithFAB({
                   <Feather
                     name="user"
                     size={26}
-                    color={isFocused ? theme.accent : theme.tabIconDefault}
+                    color={state.index === 2 ? theme.accent : theme.tabIconDefault}
                   />
                 </Pressable>
                 <Pressable
-                  onPress={() => tabNavigation.navigate("ProfileTab", { screen: "Settings" })}
+                  onPress={() => navigation.navigate("Settings")}
                   style={[styles.tabItem, styles.settingsIcon]}
                 >
                   <Feather
                     name="settings"
                     size={26}
-                    color={theme.tabIconDefault}
+                    color={state.index === 3 ? theme.accent : theme.tabIconDefault}
                   />
                 </Pressable>
               </React.Fragment>
