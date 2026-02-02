@@ -90,7 +90,7 @@ function TabBarWithFAB({
 
         <View style={styles.profileTabWrapper}>
           <Pressable
-            onPress={() => tabNavigation.navigate("ProfileTab")}
+            onPress={() => tabNavigation.navigate("ProfileTab", { screen: "Profile" })}
             style={styles.tabItem}
           >
             <Feather
@@ -100,13 +100,13 @@ function TabBarWithFAB({
             />
           </Pressable>
           <Pressable
-            onPress={() => navigation.navigate("Settings")}
+            onPress={() => tabNavigation.navigate("ProfileTab", { screen: "Settings" })}
             style={[styles.tabItem, styles.settingsIcon]}
           >
             <Feather
               name="settings"
               size={26}
-              color={state.index === 4 ? theme.accent : theme.tabIconDefault}
+              color={state.index === 3 && state.routes[3].state?.routes[state.routes[3].state?.index || 0].name === "Settings" ? theme.accent : theme.tabIconDefault}
             />
           </Pressable>
         </View>

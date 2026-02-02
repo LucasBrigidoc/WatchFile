@@ -42,7 +42,7 @@ export default function ProfileStackNavigator() {
         component={ProfileScreen}
         options={{
           headerTitle: "",
-          headerRight: () => <SettingsButton />,
+          headerShown: false,
         }}
       />
       <Stack.Screen
