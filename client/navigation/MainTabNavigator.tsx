@@ -176,8 +176,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 64,
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
+    justifyContent: "space-around",
+    paddingHorizontal: 10,
+    position: "relative",
   },
   tabItem: {
     flex: 1,
@@ -185,16 +186,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   fabContainer: {
-    flex: 1,
+    width: 38,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -20,
+    zIndex: 1,
+    marginTop: -10, // Slight lift
   },
   profileTabWrapper: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 20,
+    gap: 12,
   },
   settingsIcon: {
     // No extra margin needed with gap
