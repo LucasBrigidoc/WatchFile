@@ -220,7 +220,7 @@ export default function SearchScreen() {
         style={[
           styles.searchContainer,
           {
-            paddingTop: headerHeight + Spacing.md,
+            paddingTop: headerHeight + Spacing.xl + Spacing.md,
           },
         ]}
       >
