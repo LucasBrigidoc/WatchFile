@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, Pressable } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -58,59 +58,74 @@ function TabBarWithFAB({
         />
       )}
       <View style={styles.tabBar}>
-        {state.routes.map((route: any, index: number) => {
-          const { options } = descriptors[route.key];
-          const isFocused = state.index === index;
+        <View style={styles.leftIcons}>
+          {state.routes.slice(0, 2).map((route: any, index: number) => {
+            const isFocused = state.index === index;
+            const onPress = () => {
+              const event = tabNavigation.emit({
+                type: "tabPress",
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (!isFocused && !event.defaultPrevented) {
+                tabNavigation.navigate(route.name);
+              }
+            };
 
-          if (route.name === "CreateTab") {
             return (
-              <View key={route.key} style={styles.fabContainer}>
-                <FloatingActionButton onPress={handleCreatePress} />
-              </View>
-            );
-          }
-
-          const onPress = () => {
-            const event = tabNavigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!isFocused && !event.defaultPrevented) {
-              tabNavigation.navigate(route.name);
-            }
-          };
-
-          let iconName: keyof typeof Feather.glyphMap = "home";
-          if (route.name === "HomeTab") iconName = "home";
-          else if (route.name === "DiscoverTab") iconName = "compass";
-          else if (route.name === "ProfileTab") iconName = "user";
-
-          const isProfile = route.name === "ProfileTab";
-
-          return (
-            <View key={route.key} style={styles.tabItem}>
-              <View style={isProfile ? styles.profileTabWrapper : null}>
+              <Pressable key={route.key} onPress={onPress} style={styles.tabItem}>
                 <Feather
-                  name={iconName}
+                  name={route.name === "HomeTab" ? "home" : "compass"}
                   size={24}
                   color={isFocused ? theme.accent : theme.tabIconDefault}
-                  onPress={onPress}
                 />
-                {isProfile && (
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <View style={styles.fabContainer}>
+          <FloatingActionButton onPress={handleCreatePress} />
+        </View>
+
+        <View style={styles.profileTabWrapper}>
+          {state.routes.slice(3).map((route: any, index: number) => {
+            const actualIndex = index + 3;
+            const isFocused = state.index === actualIndex;
+            const onPress = () => {
+              const event = tabNavigation.emit({
+                type: "tabPress",
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (!isFocused && !event.defaultPrevented) {
+                tabNavigation.navigate(route.name);
+              }
+            };
+
+            return (
+              <React.Fragment key={route.key}>
+                <Pressable onPress={onPress} style={styles.tabItem}>
+                  <Feather
+                    name="user"
+                    size={24}
+                    color={isFocused ? theme.accent : theme.tabIconDefault}
+                  />
+                </Pressable>
+                <Pressable
+                  onPress={() => navigation.navigate("Settings")}
+                  style={[styles.tabItem, styles.settingsIcon]}
+                >
                   <Feather
                     name="settings"
                     size={24}
                     color={theme.tabIconDefault}
-                    style={styles.settingsIcon}
-                    onPress={() => navigation.navigate("Settings")}
                   />
-                )}
-              </View>
-            </View>
-          );
-        })}
+                </Pressable>
+              </React.Fragment>
+            );
+          })}
+        </View>
       </View>
     </View>
   );
@@ -176,27 +191,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 64,
     alignItems: "center",
-    justifyContent: "space-around",
-    paddingHorizontal: 10,
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
     position: "relative",
   },
   tabItem: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    minWidth: 44,
+    minHeight: 44,
   },
   fabContainer: {
-    width: 38,
+    position: "absolute",
+    left: "50%",
+    marginLeft: -19, // Half of 38px
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1,
-    marginTop: -10, // Slight lift
+  },
+  leftIcons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 30,
   },
   profileTabWrapper: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: 15,
   },
   settingsIcon: {
     // No extra margin needed with gap
