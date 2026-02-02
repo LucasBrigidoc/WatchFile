@@ -35,7 +35,7 @@ function TabBarWithFAB({
   const { theme, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<any>>();
 
   const handleCreatePress = () => {
     navigation.navigate("CreatePost");
@@ -174,9 +174,9 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: "row",
-    height: 56,
+    height: 64,
     alignItems: "center",
-    justifyContent: "space-around",
+    paddingHorizontal: 16,
   },
   tabItem: {
     flex: 1,
@@ -184,16 +184,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   fabContainer: {
-    flex: 1,
+    width: 64,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -28,
+    marginTop: -20,
   },
   profileTabWrapper: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 24,
+    gap: 16,
   },
   settingsIcon: {
     // No extra margin needed with gap
