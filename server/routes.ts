@@ -52,6 +52,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/books/search", async (req, res) => {
+    const query = req.query.q;
+    if (!query) {
+      return res.status(400).json({ message: "Query parameter 'q' is required" });
+    }
+
+    try {
+      const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
+      const response = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+          query as string
+        )}&key=${apiKey}&maxResults=20&language=pt`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Google Books API responded with status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error searching Google Books:", error);
+      res.status(500).json({ message: "Failed to search books" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

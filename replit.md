@@ -11,4 +11,4 @@
 - [ ] Implementar serviço de busca de músicas (Spotify)
 - [x] Implementar rota de filmes (TMDB)
 - [x] Integrar busca de filmes e séries no frontend
-- [ ] Integrar API de Livros
+- [x] Integrar API de Livros (Google Books)

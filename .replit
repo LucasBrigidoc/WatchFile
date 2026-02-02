@@ -78,3 +78,4 @@ ensurePreviewReachable = "/status"
 
 [userenv.shared]
 TMDB_API_KEY = "9c7b37bc475512c26d633793d03146c4"
+GOOGLE_BOOKS_API_KEY = "AIzaSyAZotJ9JWu-uXcfbMBX6Bntopp0jSi_8bk"

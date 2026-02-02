@@ -52,22 +52,42 @@ export default function SearchScreen() {
       const domain = process.env.EXPO_PUBLIC_DOMAIN || window.location.host;
       const protocol = window.location.protocol;
       const baseUrl = `${protocol}//${domain}`;
-      const response = await fetch(`${baseUrl}/api/movies/search?q=${encodeURIComponent(searchQuery)}`);
-      const data = await response.json();
       
-      if (data.results) {
-        const mappedResults = data.results.map((item: any) => ({
-          id: item.id.toString(),
+      // Busca Filmes e Séries (TMDB)
+      const movieResponse = await fetch(`${baseUrl}/api/movies/search?q=${encodeURIComponent(searchQuery)}`);
+      const movieData = await movieResponse.json();
+      
+      // Busca Livros (Google Books)
+      const bookResponse = await fetch(`${baseUrl}/api/books/search?q=${encodeURIComponent(searchQuery)}`);
+      const bookData = await bookResponse.json();
+
+      let allResults: any[] = [];
+
+      if (movieData.results) {
+        allResults = [...allResults, ...movieData.results.map((item: any) => ({
+          id: `movie-${item.id}`,
           title: item.title || item.name,
           imageUrl: item.poster_path 
             ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
             : "https://via.placeholder.com/400x600?text=No+Image",
           type: item.media_type === "movie" ? "film" : "series",
           year: (item.release_date || item.first_air_date || "").split("-")[0],
-          rating: item.vote_average / 2, // TMDB is 0-10, we use 0-5
-        }));
-        setResults(mappedResults);
+          rating: item.vote_average / 2,
+        }))];
       }
+
+      if (bookData.items) {
+        allResults = [...allResults, ...bookData.items.map((item: any) => ({
+          id: `book-${item.id}`,
+          title: item.volumeInfo.title,
+          imageUrl: item.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://") || "https://via.placeholder.com/400x600?text=No+Image",
+          type: "book",
+          year: (item.volumeInfo.publishedDate || "").split("-")[0],
+          rating: item.volumeInfo.averageRating || 0,
+        }))];
+      }
+
+      setResults(allResults);
     } catch (error) {
       console.error("Search error:", error);
     } finally {
