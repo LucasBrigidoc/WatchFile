@@ -147,8 +147,8 @@ export const Shadows = {
 };
 
 export const Gradients = {
-  primary: ["#00D9FF", "#6C63FF"],
-  card: ["rgba(0, 217, 255, 0.15)", "rgba(108, 99, 255, 0.15)"],
+  primary: ["#5087ff", "#5087ff"],
+  card: ["rgba(80, 135, 255, 0.15)", "rgba(80, 135, 255, 0.15)"],
 };
 
 export const Fonts = Platform.select({

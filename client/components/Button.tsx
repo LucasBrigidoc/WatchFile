@@ -16,6 +16,7 @@ interface ButtonProps {
   onPress?: () => void;
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<any>;
   disabled?: boolean;
   variant?: "primary" | "secondary" | "ghost";
 }
@@ -34,6 +35,7 @@ export function Button({
   onPress,
   children,
   style,
+  textStyle,
   disabled = false,
   variant = "primary",
 }: ButtonProps) {
@@ -106,7 +108,7 @@ export function Button({
         >
           <ThemedText
             type="body"
-            style={[styles.buttonText, { color: getTextColor() }]}
+            style={[styles.buttonText, { color: getTextColor() }, textStyle]}
           >
             {children}
           </ThemedText>
@@ -131,7 +133,7 @@ export function Button({
     >
       <ThemedText
         type="body"
-        style={[styles.buttonText, { color: getTextColor() }]}
+        style={[styles.buttonText, { color: getTextColor() }, textStyle]}
       >
         {children}
       </ThemedText>
