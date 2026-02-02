@@ -59,7 +59,11 @@ export default function SearchScreen() {
       
       // Busca Livros (Google Books)
       const bookResponse = await fetch(`${baseUrl}/api/books/search?q=${encodeURIComponent(searchQuery)}`);
-      const bookData = await bookResponse.json();
+      const bookData = await bookResponse.json().catch(() => ({ items: [] }));
+
+      // Busca Músicas (Deezer)
+      const musicResponse = await fetch(`${baseUrl}/api/music/search?q=${encodeURIComponent(searchQuery)}`);
+      const musicData = await musicResponse.json().catch(() => ({ data: [] }));
 
       let allResults: any[] = [];
 
@@ -84,6 +88,17 @@ export default function SearchScreen() {
           type: "book",
           year: (item.volumeInfo.publishedDate || "").split("-")[0],
           rating: item.volumeInfo.averageRating || 0,
+        }))];
+      }
+
+      if (musicData.data) {
+        allResults = [...allResults, ...musicData.data.map((item: any) => ({
+          id: `music-${item.id}`,
+          title: `${item.title} - ${item.artist.name}`,
+          imageUrl: item.album.cover_big || item.album.cover_medium || "https://via.placeholder.com/400x400?text=No+Image",
+          type: "music",
+          year: "", // Deezer search doesn't provide year directly in top results usually
+          rating: 0,
         }))];
       }
 

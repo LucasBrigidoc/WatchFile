@@ -12,3 +12,4 @@
 - [x] Implementar rota de filmes (TMDB)
 - [x] Integrar busca de filmes e séries no frontend
 - [x] Integrar API de Livros (Google Books)
+- [x] Integrar busca de músicas (Deezer)
