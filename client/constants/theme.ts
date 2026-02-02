@@ -1,48 +1,48 @@
 import { Platform } from "react-native";
 
-const accentCyan = "#00D9FF";
-const accentPurple = "#6C63FF";
+const accentCyan = "#173DED"; // Palatinate Blue
+const accentPurple = "#000051"; // Alucard Night
 
 export const Colors = {
   light: {
     text: "#FFFFFF",
-    textSecondary: "#9CA3AF",
-    buttonText: "#0D0D0D",
-    tabIconDefault: "#6B7280",
+    textSecondary: "#BABABA", // Baby Grey
+    buttonText: "#000029", // Black Russian
+    tabIconDefault: "#7D8491", // Slate Blue
     tabIconSelected: accentCyan,
     link: accentCyan,
     accent: accentCyan,
     accentSecondary: accentPurple,
-    backgroundRoot: "#0D0D0D",
-    backgroundDefault: "#1A1A1A",
-    backgroundSecondary: "#242424",
-    backgroundTertiary: "#2E2E2E",
-    border: "#2A2A2A",
+    backgroundRoot: "#000029", // Black Russian
+    backgroundDefault: "#000051", // Alucard Night
+    backgroundSecondary: "#1A1D29", // Midnight Blue
+    backgroundTertiary: "#3D3F4A", // Charcoal Gray
+    border: "#3D3F4A",
     success: "#10B981",
     warning: "#F59E0B",
     error: "#EF4444",
     star: accentCyan,
-    glass: "rgba(26, 26, 26, 0.8)",
+    glass: "rgba(26, 29, 41, 0.8)",
   },
   dark: {
     text: "#FFFFFF",
-    textSecondary: "#9CA3AF",
-    buttonText: "#0D0D0D",
-    tabIconDefault: "#6B7280",
+    textSecondary: "#BABABA", // Baby Grey
+    buttonText: "#000029", // Black Russian
+    tabIconDefault: "#7D8491", // Slate Blue
     tabIconSelected: accentCyan,
     link: accentCyan,
     accent: accentCyan,
     accentSecondary: accentPurple,
-    backgroundRoot: "#0D0D0D",
-    backgroundDefault: "#1A1A1A",
-    backgroundSecondary: "#242424",
-    backgroundTertiary: "#2E2E2E",
-    border: "#2A2A2A",
+    backgroundRoot: "#000029", // Black Russian
+    backgroundDefault: "#000051", // Alucard Night
+    backgroundSecondary: "#1A1D29", // Midnight Blue
+    backgroundTertiary: "#3D3F4A", // Charcoal Gray
+    border: "#3D3F4A",
     success: "#10B981",
     warning: "#F59E0B",
     error: "#EF4444",
     star: accentCyan,
-    glass: "rgba(26, 26, 26, 0.8)",
+    glass: "rgba(26, 29, 41, 0.8)",
   },
 };
 
@@ -147,8 +147,8 @@ export const Shadows = {
 };
 
 export const Gradients = {
-  primary: ["#00D9FF", "#6C63FF"],
-  card: ["rgba(0, 217, 255, 0.15)", "rgba(108, 99, 255, 0.15)"],
+  primary: ["#173DED", "#000051"],
+  card: ["rgba(23, 61, 237, 0.15)", "rgba(0, 0, 81, 0.15)"],
 };
 
 export const Fonts = Platform.select({
