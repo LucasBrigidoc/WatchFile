@@ -7,7 +7,7 @@ export const Colors = {
   light: {
     text: "#FFFFFF",
     textSecondary: "#9CA3AF",
-    buttonText: "#0D0D0D",
+    buttonText: "#FFFFFF",
     tabIconDefault: "#6B7280",
     tabIconSelected: accentNeonBlue,
     link: accentNeonBlue,
@@ -27,7 +27,7 @@ export const Colors = {
   dark: {
     text: "#FFFFFF",
     textSecondary: "#9CA3AF",
-    buttonText: "#0D0D0D",
+    buttonText: "#FFFFFF",
     tabIconDefault: "#6B7280",
     tabIconSelected: accentNeonBlue,
     link: accentNeonBlue,

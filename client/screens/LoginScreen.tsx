@@ -128,7 +128,7 @@ export default function LoginScreen() {
           onPress={handleLogin}
           disabled={!canLogin || isLoading}
           style={styles.loginButton}
-          textStyle={{ color: "#9CA3AF" }}
+          textStyle={{ color: "#FFFFFF" }}
         >
           {isLoading ? "Signing in..." : "Sign In"}
         </Button>

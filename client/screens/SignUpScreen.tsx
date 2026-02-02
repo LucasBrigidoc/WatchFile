@@ -167,7 +167,7 @@ export default function SignUpScreen() {
           onPress={handleSignUp}
           disabled={!canSignUp || isLoading}
           style={styles.signUpButton}
-          textStyle={{ color: "#9CA3AF" }}
+          textStyle={{ color: "#FFFFFF" }}
         >
           {isLoading ? "Creating account..." : "Create Account"}
         </Button>
