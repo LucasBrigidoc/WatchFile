@@ -69,6 +69,10 @@ export default function SearchScreen() {
       const animeResponse = await fetch(`${baseUrl}/api/anime/search?q=${encodeURIComponent(searchQuery)}`);
       const animeData = await animeResponse.json().catch(() => ({ data: [] }));
 
+      // Busca Mangás (Jikan)
+      const mangaResponse = await fetch(`${baseUrl}/api/manga/search?q=${encodeURIComponent(searchQuery)}`);
+      const mangaData = await mangaResponse.json().catch(() => ({ data: [] }));
+
       let allResults: any[] = [];
 
       if (movieData.results) {
@@ -113,6 +117,17 @@ export default function SearchScreen() {
           imageUrl: item.images.jpg.large_image_url || item.images.jpg.image_url || "https://via.placeholder.com/400x600?text=No+Image",
           type: "anime",
           year: (item.aired?.from || "").split("-")[0],
+          rating: item.score ? item.score / 2 : 0,
+        }))];
+      }
+
+      if (mangaData.data) {
+        allResults = [...allResults, ...mangaData.data.map((item: any) => ({
+          id: `manga-${item.mal_id}`,
+          title: item.title,
+          imageUrl: item.images.jpg.large_image_url || item.images.jpg.image_url || "https://via.placeholder.com/400x600?text=No+Image",
+          type: "manga",
+          year: (item.published?.from || "").split("-")[0],
           rating: item.score ? item.score / 2 : 0,
         }))];
       }
@@ -191,6 +206,8 @@ export default function SearchScreen() {
     if (selectedFilter === "film") return item.type === "film";
     if (selectedFilter === "series") return item.type === "series";
     if (selectedFilter === "book") return item.type === "book";
+    if (selectedFilter === "anime") return item.type === "anime";
+    if (selectedFilter === "manga") return item.type === "manga";
     return item.type === selectedFilter;
   });
 
