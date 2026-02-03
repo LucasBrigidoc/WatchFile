@@ -107,58 +107,63 @@ export default function CreatePostScreen() {
           { paddingBottom: insets.bottom + Spacing.xl },
         ]}
         keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets={true}
       >
-        <ThemedText
-          type="small"
-          style={[styles.sectionLabel, { color: theme.textSecondary }]}
-        >
-          What type of media?
-        </ThemedText>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.typesList}
-        >
-          {MEDIA_TYPES.map((type) => (
-            <Pressable
-              key={type.key}
-              onPress={() => {
-                setSelectedType(type.key === selectedType ? null : type.key);
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              }}
-              style={[
-                styles.typeChip,
-                {
-                  backgroundColor:
-                    selectedType === type.key
-                      ? theme.accent
-                      : theme.backgroundDefault,
-                  borderColor:
-                    selectedType === type.key ? theme.accent : theme.border,
-                },
-              ]}
+        {!selectedMedia && (
+          <>
+            <ThemedText
+              type="small"
+              style={[styles.sectionLabel, { color: theme.textSecondary }]}
             >
-              <Feather
-                name={type.icon as any}
-                size={16}
-                color={
-                  selectedType === type.key ? "#0D0D0D" : theme.textSecondary
-                }
-              />
-              <ThemedText
-                type="small"
-                style={{
-                  color:
-                    selectedType === type.key ? "#0D0D0D" : theme.textSecondary,
-                  marginLeft: Spacing.xs,
-                  fontWeight: selectedType === type.key ? "600" : "400",
-                }}
-              >
-                {type.label}
-              </ThemedText>
-            </Pressable>
-          ))}
-        </ScrollView>
+              What type of media?
+            </ThemedText>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.typesList}
+            >
+              {MEDIA_TYPES.map((type) => (
+                <Pressable
+                  key={type.key}
+                  onPress={() => {
+                    setSelectedType(type.key === selectedType ? null : type.key);
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
+                  style={[
+                    styles.typeChip,
+                    {
+                      backgroundColor:
+                        selectedType === type.key
+                          ? theme.accent
+                          : theme.backgroundDefault,
+                      borderColor:
+                        selectedType === type.key ? theme.accent : theme.border,
+                    },
+                  ]}
+                >
+                  <Feather
+                    name={type.icon as any}
+                    size={16}
+                    color={
+                      selectedType === type.key ? "#0D0D0D" : theme.textSecondary
+                    }
+                  />
+                  <ThemedText
+                    type="small"
+                    style={{
+                      color:
+                        selectedType === type.key ? "#0D0D0D" : theme.textSecondary,
+                      marginLeft: Spacing.xs,
+                      fontWeight: selectedType === type.key ? "600" : "400",
+                    }}
+                  >
+                    {type.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </>
+        )}
 
         {!selectedMedia ? (
           <>
