@@ -45,6 +45,7 @@ export function StarRating({
   const renderStar = (index: number) => {
     const filled = index + 1 <= Math.floor(rating);
     const halfFilled = showHalf && !filled && index < rating;
+    const isMaxRating = rating === maxRating;
 
     let iconName: "star" | "star-half-full" | "star-o" = "star-o";
     if (filled) {
@@ -53,12 +54,16 @@ export function StarRating({
       iconName = "star-half-full";
     }
 
+    const starColor = isMaxRating 
+      ? "#FFD700" 
+      : (filled || halfFilled ? theme.star : theme.textSecondary);
+
     return (
       <View key={index} style={styles.starWrapper}>
         <FontAwesome
           name={iconName}
           size={size}
-          color={filled || halfFilled ? theme.star : theme.textSecondary}
+          color={starColor}
           style={[
             styles.star,
             { opacity: filled || halfFilled ? 1 : 0.3 },
@@ -74,7 +79,12 @@ export function StarRating({
         <Text style={[styles.ratingText, { color: theme.textSecondary }]}>
           {rating}/{maxRating}
         </Text>
-        <FontAwesome name="star" size={16} color={theme.star} style={styles.labelIcon} />
+        <FontAwesome 
+          name="star" 
+          size={16} 
+          color={rating === maxRating ? "#FFD700" : theme.star} 
+          style={styles.labelIcon} 
+        />
       </View>
       <View 
         style={styles.container}
