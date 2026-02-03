@@ -281,7 +281,7 @@ export default function CreatePostScreen() {
                 style={[styles.commentInput, { color: theme.text }]}
                 multiline
                 textAlignVertical="top"
-                containerStyle={{ marginBottom: 0 }}
+                containerStyle={{ flex: 1, marginBottom: 0 }}
               />
             </View>
           </>
