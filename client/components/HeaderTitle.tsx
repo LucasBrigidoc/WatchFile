@@ -15,13 +15,10 @@ export function HeaderTitle({ title }: HeaderTitleProps) {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/icon.png")}
-        style={styles.icon}
+        source={require("../assets/images/logo.png")}
+        style={styles.logo}
         resizeMode="contain"
       />
-      <ThemedText style={[styles.title, { color: theme.accent }]}>
-        {title}
-      </ThemedText>
     </View>
   );
 }
@@ -32,10 +29,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  icon: {
-    width: 28,
-    height: 28,
-    marginRight: Spacing.sm,
+  logo: {
+    width: 120,
+    height: 40,
   },
   title: {
     fontSize: 18,
