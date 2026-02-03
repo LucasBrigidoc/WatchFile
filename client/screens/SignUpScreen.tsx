@@ -75,18 +75,18 @@ export default function SignUpScreen() {
     >
       <View style={styles.header}>
         <Image
-          source={require("../../assets/images/icon.png")}
+          source={require("../../assets/images/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
         <ThemedText type="h2" style={[styles.title, { color: theme.accent }]}>
-          Join CultureHub
+          Join WatchFile
         </ThemedText>
         <ThemedText
           type="body"
           style={[styles.subtitle, { color: theme.textSecondary }]}
         >
-          Create your cultural profile
+          Crie seu perfil cultural
         </ThemedText>
       </View>
 

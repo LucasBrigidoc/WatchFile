@@ -196,7 +196,7 @@ export default function SettingsScreen() {
         ABOUT
       </ThemedText>
       <GlassCard noPadding style={styles.section}>
-        <SettingRow icon="info" label="About CultureHub" />
+        <SettingRow icon="info" label="About WatchFile" />
         <View style={[styles.divider, { backgroundColor: theme.border }]} />
         <SettingRow icon="file-text" label="Terms of Service" />
         <View style={[styles.divider, { backgroundColor: theme.border }]} />

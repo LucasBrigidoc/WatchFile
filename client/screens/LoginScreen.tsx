@@ -64,18 +64,18 @@ export default function LoginScreen() {
     >
       <View style={styles.header}>
         <Image
-          source={require("../../assets/images/icon.png")}
+          source={require("../../assets/images/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
         <ThemedText type="h2" style={[styles.title, { color: theme.accent }]}>
-          CultureHub
+          WatchFile
         </ThemedText>
         <ThemedText
           type="body"
           style={[styles.subtitle, { color: theme.textSecondary }]}
         >
-          Your cultural identity, unified
+          Seu hub cultural, unificado
         </ThemedText>
       </View>
 
