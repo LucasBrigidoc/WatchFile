@@ -64,6 +64,7 @@ export function MediaCard({
           source={{ uri: imageUrl }}
           style={styles.gradientImage}
           contentFit="cover"
+          tintColor="rgba(0, 123, 255, 0.4)"
         />
         <LinearGradient
           colors={["transparent", "rgba(0,0,0,0.8)"]}
