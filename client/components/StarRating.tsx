@@ -25,14 +25,20 @@ export function StarRating({
 }: StarRatingProps) {
   const { theme } = useTheme();
 
-  const handlePress = (event: any, index: number) => {
+  const handlePanResponder = (event: any) => {
     if (editable && onRatingChange) {
       const { locationX } = event.nativeEvent;
-      const isHalf = showHalf && locationX < size / 2;
-      const newRating = index + (isHalf ? 0.5 : 1);
+      const starIndex = Math.floor(locationX / (size + Spacing.xs));
+      const starPosition = locationX % (size + Spacing.xs);
+      const isHalf = showHalf && starPosition < size / 2;
       
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      onRatingChange(newRating);
+      let newRating = starIndex + (isHalf ? 0.5 : 1);
+      newRating = Math.max(0, Math.min(maxRating, newRating));
+      
+      if (newRating !== rating) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        onRatingChange(newRating);
+      }
     }
   };
 
@@ -48,12 +54,7 @@ export function StarRating({
     }
 
     return (
-      <Pressable
-        key={index}
-        onPress={(e) => handlePress(e, index)}
-        disabled={!editable}
-        hitSlop={{ top: 10, bottom: 10, left: 5, right: 5 }}
-      >
+      <View key={index} style={styles.starWrapper}>
         <FontAwesome
           name={iconName}
           size={size}
@@ -63,19 +64,25 @@ export function StarRating({
             { opacity: filled || halfFilled ? 1 : 0.3 },
           ]}
         />
-      </Pressable>
+      </View>
     );
   };
 
   return (
     <View style={styles.outerContainer}>
       <View style={styles.labelContainer}>
-        <FontAwesome name="star" size={12} color={theme.star} />
         <Text style={[styles.ratingText, { color: theme.textSecondary }]}>
           {rating}/{maxRating}
         </Text>
+        <FontAwesome name="star" size={16} color={theme.star} style={styles.labelIcon} />
       </View>
-      <View style={styles.container}>
+      <View 
+        style={styles.container}
+        onStartShouldSetResponder={() => editable}
+        onMoveShouldSetResponder={() => editable}
+        onResponderGrant={handlePanResponder}
+        onResponderMove={handlePanResponder}
+      >
         {Array.from({ length: maxRating }, (_, i) => renderStar(i))}
       </View>
     </View>
@@ -84,23 +91,32 @@ export function StarRating({
 
 const styles = StyleSheet.create({
   outerContainer: {
-    alignItems: "flex-start",
+    alignItems: "center",
+    width: "100%",
   },
   labelContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: Spacing.xs,
+    justifyContent: "center",
+    marginBottom: Spacing.sm,
+  },
+  labelIcon: {
+    marginLeft: 6,
   },
   ratingText: {
-    ...Typography.caption,
-    marginLeft: 4,
-    fontWeight: "600",
+    ...Typography.h3,
+    fontWeight: "700",
   },
   container: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+  },
+  starWrapper: {
+    paddingRight: Spacing.xs,
   },
   star: {
-    marginRight: Spacing.xs,
+    // margin handling moved to wrapper for easier hit detection calculation
   },
 });
