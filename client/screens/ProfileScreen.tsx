@@ -22,13 +22,13 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
 
-type ProfileTab = "posts" | "reviews" | "lists" | "status";
+type ProfileTab = "posts" | "reviews" | "lists" | "republicados";
 
 const TABS: { key: ProfileTab; label: string }[] = [
   { key: "posts", label: "Posts" },
-  { key: "reviews", label: "Reviews" },
-  { key: "lists", label: "Lists" },
-  { key: "status", label: "Status" },
+  { key: "reviews", label: "Perfil" },
+  { key: "lists", label: "listas" },
+  { key: "republicados", label: "Repúblicados" },
 ];
 
 const MOCK_POSTS = [
@@ -86,7 +86,7 @@ export default function ProfileScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState<ProfileTab>("posts");
+  const [activeTab, setActiveTab] = useState<ProfileTab>("reviews");
 
   const name = user?.name || "User";
   const bio = user?.bio || "No bio yet";
@@ -205,7 +205,7 @@ export default function ProfileScreen() {
           />
         );
 
-      case "status":
+      case "republicados":
         return (
           <EmptyState
             type="status"
