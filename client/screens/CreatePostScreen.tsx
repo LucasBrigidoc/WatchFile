@@ -294,7 +294,7 @@ export default function CreatePostScreen() {
             >
               <ThemedText
                 style={{
-                  color: "#0D0D0D",
+                  color: "#FFFFFF",
                   fontWeight: "700",
                   fontSize: 16,
                 }}
