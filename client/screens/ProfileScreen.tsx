@@ -116,44 +116,59 @@ export default function ProfileScreen() {
   const bio = user?.bio || "No bio yet";
   const avatarUrl = user?.avatarUrl;
 
-  const renderStatsSection = () => (
-    <View style={styles.statsSection}>
-      <GlassCard style={styles.statsCard}>
-        <ThemedText type="body" style={styles.statsTitle}>Avaliações</ThemedText>
-        {RATINGS_DISTRIBUTION.map((item) => (
-          <View key={item.stars} style={styles.ratingRow}>
-            <View style={styles.starsLabel}>
-              <ThemedText type="small">{item.stars}</ThemedText>
-              <Feather name="star" size={12} color={theme.star} style={{ marginLeft: 4 }} />
-            </View>
-            <View style={styles.progressBarContainer}>
-              <View 
-                style={[
-                  styles.progressBar, 
-                  { 
-                    backgroundColor: theme.accent, 
-                    width: `${(item.count / 24) * 100}%` 
-                  }
-                ]} 
-              />
-            </View>
-            <ThemedText type="small" style={styles.ratingCount}>{item.count}</ThemedText>
-          </View>
-        ))}
-      </GlassCard>
+  const renderStatsSection = () => {
+    const totalHours = CATEGORY_HOURS.reduce((sum, item) => sum + item.hours, 0);
 
-      <GlassCard style={styles.statsCard}>
-        <ThemedText type="body" style={styles.statsTitle}>Tempo por Categoria</ThemedText>
-        <View style={styles.hoursGrid}>
-          {CATEGORY_HOURS.map((item) => (
-            <View key={item.label} style={styles.hourItem}>
-              <Feather name={item.icon as any} size={20} color={theme.accent} />
-              <ThemedText type="h3" style={styles.hourValue}>{item.hours}h</ThemedText>
-              <ThemedText type="small" style={{ color: theme.textSecondary }}>{item.label}</ThemedText>
+    return (
+      <View style={styles.statsSection}>
+        <GlassCard style={styles.statsCard}>
+          <ThemedText type="body" style={styles.statsTitle}>Bio</ThemedText>
+          <ThemedText type="small" style={{ color: theme.textSecondary }}>
+            {bio}
+          </ThemedText>
+        </GlassCard>
+
+        <GlassCard style={styles.statsCard}>
+          <ThemedText type="body" style={styles.statsTitle}>Avaliações</ThemedText>
+          {RATINGS_DISTRIBUTION.map((item) => (
+            <View key={item.stars} style={styles.ratingRow}>
+              <View style={styles.starsLabel}>
+                <ThemedText type="small">{item.stars}</ThemedText>
+                <Feather name="star" size={12} color={theme.star} style={{ marginLeft: 4 }} />
+              </View>
+              <View style={styles.progressBarContainer}>
+                <View 
+                  style={[
+                    styles.progressBar, 
+                    { 
+                      backgroundColor: theme.accent, 
+                      width: `${(item.count / 24) * 100}%` 
+                    }
+                  ]} 
+                />
+              </View>
+              <ThemedText type="small" style={styles.ratingCount}>{item.count}</ThemedText>
             </View>
           ))}
-        </View>
-      </GlassCard>
+        </GlassCard>
+
+        <GlassCard style={styles.statsCard}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: Spacing.md }}>
+            <ThemedText type="body" style={{ fontWeight: "600" }}>Tempo por Categoria</ThemedText>
+            <View style={{ backgroundColor: theme.backgroundSecondary, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 }}>
+              <ThemedText type="small" style={{ fontWeight: "700", color: theme.accent }}>Total: {totalHours}h</ThemedText>
+            </View>
+          </View>
+          <View style={styles.hoursGrid}>
+            {CATEGORY_HOURS.map((item) => (
+              <View key={item.label} style={styles.hourItem}>
+                <Feather name={item.icon as any} size={20} color={theme.accent} />
+                <ThemedText type="h3" style={styles.hourValue}>{item.hours}h</ThemedText>
+                <ThemedText type="small" style={{ color: theme.textSecondary }}>{item.label}</ThemedText>
+              </View>
+            ))}
+          </View>
+        </GlassCard>
 
       <GlassCard style={styles.statsCard}>
         <ThemedText type="body" style={styles.statsTitle}>Meus Favoritos</ThemedText>
@@ -169,6 +184,7 @@ export default function ProfileScreen() {
       </GlassCard>
     </View>
   );
+};
 
   const renderTabContent = () => {
     switch (activeTab) {
