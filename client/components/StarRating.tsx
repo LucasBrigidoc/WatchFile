@@ -42,10 +42,12 @@ export function StarRating({
     }
   };
 
+  const isMaxRating = rating === maxRating;
+  const GOLD_COLOR = "#FFD700";
+
   const renderStar = (index: number) => {
     const filled = index + 1 <= Math.floor(rating);
     const halfFilled = showHalf && !filled && index < rating;
-    const isMaxRating = rating === maxRating;
 
     let iconName: "star" | "star-half-full" | "star-o" = "star-o";
     if (filled) {
@@ -55,7 +57,7 @@ export function StarRating({
     }
 
     const starColor = isMaxRating 
-      ? "#FFD700" 
+      ? GOLD_COLOR 
       : (filled || halfFilled ? theme.star : theme.textSecondary);
 
     return (
@@ -73,14 +75,26 @@ export function StarRating({
     );
   };
 
-  const formattedRating = (Math.round(rating * 2) / 2).toFixed(1);
+  const formattedRating = (Math.round(rating * 2) / 2).toString();
 
   return (
     <View style={styles.outerContainer}>
       <View style={styles.container}>
-        <View style={styles.labelContainer}>
-          <Text style={[styles.ratingText, { color: theme.textSecondary, fontSize: size * 0.9 }]}>
-            {formattedRating}
+        <View style={styles.topLabelContainer}>
+          <FontAwesome 
+            name="star" 
+            size={size * 0.7} 
+            color={isMaxRating ? GOLD_COLOR : theme.textSecondary} 
+          />
+          <Text style={[
+            styles.ratingText, 
+            { 
+              color: isMaxRating ? GOLD_COLOR : theme.textSecondary, 
+              fontSize: size * 0.8,
+              marginLeft: 4
+            }
+          ]}>
+            {formattedRating}/{maxRating}
           </Text>
         </View>
         <View 
@@ -99,30 +113,27 @@ export function StarRating({
 
 const styles = StyleSheet.create({
   outerContainer: {
-    alignItems: "flex-start",
+    alignItems: "center",
   },
   container: {
-    flexDirection: "row",
     alignItems: "center",
   },
   starsContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-  labelContainer: {
+  topLabelContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 6,
-  },
-  labelIcon: {
-    marginLeft: 4,
+    justifyContent: "center",
+    marginBottom: 4,
   },
   ratingText: {
     ...Typography.body,
-    fontWeight: "700",
+    fontWeight: "800",
   },
   starWrapper: {
-    paddingRight: 2,
+    paddingHorizontal: 1,
   },
   star: {
   },
