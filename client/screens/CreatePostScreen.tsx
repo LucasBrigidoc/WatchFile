@@ -100,8 +100,21 @@ export default function CreatePostScreen() {
         keyboardShouldPersistTaps="handled"
         automaticallyAdjustKeyboardInsets={true}
       >
-        {!selectedMedia && (
+        {!selectedMedia ? (
           <>
+            <ThemedText
+              type="small"
+              style={[styles.sectionLabel, { color: theme.textSecondary }]}
+            >
+              Search for media
+            </ThemedText>
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search..."
+              icon={<Feather name="search" size={20} color={theme.textSecondary} />}
+            />
+
             <ThemedText
               type="small"
               style={[styles.sectionLabel, { color: theme.textSecondary }]}
@@ -153,23 +166,6 @@ export default function CreatePostScreen() {
                 </Pressable>
               ))}
             </ScrollView>
-          </>
-        )}
-
-        {!selectedMedia ? (
-          <>
-            <ThemedText
-              type="small"
-              style={[styles.sectionLabel, { color: theme.textSecondary }]}
-            >
-              Search for media
-            </ThemedText>
-            <TextInput
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Search..."
-              icon={<Feather name="search" size={20} color={theme.textSecondary} />}
-            />
 
             {searchResults.map((result) => (
               <Pressable
