@@ -113,7 +113,13 @@ export function MediaCard({
           <ThemedText type="h4" numberOfLines={2} style={styles.fullTitle}>
             {title}
           </ThemedText>
-          {rating !== undefined ? <StarRating rating={rating} size={16} /> : null}
+          <View style={styles.fullInfo}>
+            {rating !== undefined ? <StarRating rating={rating} size={14} /> : null}
+            <View style={styles.infoDot} />
+            <ThemedText type="small" style={{ color: theme.textSecondary }}>
+              2h 15m
+            </ThemedText>
+          </View>
         </View>
       </AnimatedPressable>
     );
@@ -134,9 +140,11 @@ export function MediaCard({
       <ThemedText type="small" numberOfLines={1} style={styles.compactTitle}>
         {title}
       </ThemedText>
-      {rating !== undefined ? (
-        <StarRating rating={rating} size={12} maxRating={5} />
-      ) : null}
+      <View style={styles.compactInfo}>
+        {rating !== undefined ? (
+          <StarRating rating={rating} size={10} maxRating={5} />
+        ) : null}
+      </View>
     </AnimatedPressable>
   );
 }
@@ -153,7 +161,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   compactTitle: {
-    marginBottom: Spacing.xs,
+    marginBottom: 2,
+  },
+  compactInfo: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   fullCard: {
     flexDirection: "row",
@@ -168,15 +180,28 @@ const styles = StyleSheet.create({
   fullContent: {
     flex: 1,
     padding: Spacing.md,
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
   fullHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: 4,
   },
   fullTitle: {
-    marginVertical: Spacing.sm,
+    marginBottom: 4,
+  },
+  fullInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  infoDot: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    marginHorizontal: Spacing.xs,
   },
   gradientCard: {
     width: 160,

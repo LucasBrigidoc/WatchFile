@@ -73,27 +73,25 @@ export function StarRating({
     );
   };
 
+  const formattedRating = (Math.round(rating * 2) / 2).toFixed(1);
+
   return (
     <View style={styles.outerContainer}>
-      <View style={styles.labelContainer}>
-        <Text style={[styles.ratingText, { color: theme.textSecondary }]}>
-          {rating}/{maxRating}
-        </Text>
-        <FontAwesome 
-          name="star" 
-          size={16} 
-          color={rating === maxRating ? "#FFD700" : theme.star} 
-          style={styles.labelIcon} 
-        />
-      </View>
-      <View 
-        style={styles.container}
-        onStartShouldSetResponder={() => editable}
-        onMoveShouldSetResponder={() => editable}
-        onResponderGrant={handlePanResponder}
-        onResponderMove={handlePanResponder}
-      >
-        {Array.from({ length: maxRating }, (_, i) => renderStar(i))}
+      <View style={styles.container}>
+        <View 
+          style={styles.starsContainer}
+          onStartShouldSetResponder={() => editable}
+          onMoveShouldSetResponder={() => editable}
+          onResponderGrant={handlePanResponder}
+          onResponderMove={handlePanResponder}
+        >
+          {Array.from({ length: maxRating }, (_, i) => renderStar(i))}
+        </View>
+        <View style={styles.labelContainer}>
+          <Text style={[styles.ratingText, { color: theme.textSecondary, fontSize: size * 0.8 }]}>
+            {formattedRating}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -101,32 +99,31 @@ export function StarRating({
 
 const styles = StyleSheet.create({
   outerContainer: {
-    alignItems: "center",
-    width: "100%",
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: Spacing.sm,
-  },
-  labelIcon: {
-    marginLeft: 6,
-  },
-  ratingText: {
-    ...Typography.h3,
-    fontWeight: "700",
+    alignItems: "flex-start",
   },
   container: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 10,
+  },
+  starsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  labelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: Spacing.xs,
+  },
+  labelIcon: {
+    marginLeft: 4,
+  },
+  ratingText: {
+    ...Typography.body,
+    fontWeight: "700",
   },
   starWrapper: {
-    paddingRight: Spacing.xs,
+    paddingRight: 2,
   },
   star: {
-    // margin handling moved to wrapper for easier hit detection calculation
   },
 });
