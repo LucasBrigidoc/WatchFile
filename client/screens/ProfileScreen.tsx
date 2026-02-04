@@ -24,11 +24,11 @@ import { useAuth } from "@/contexts/AuthContext";
 
 type ProfileTab = "posts" | "reviews" | "lists" | "republicados";
 
-const TABS: { key: ProfileTab; label: string }[] = [
-  { key: "posts", label: "Posts" },
-  { key: "reviews", label: "Perfil" },
-  { key: "lists", label: "listas" },
-  { key: "republicados", label: "Repúblicados" },
+const TABS: { key: ProfileTab; icon: string }[] = [
+  { key: "reviews", icon: "user" },
+  { key: "posts", icon: "grid" },
+  { key: "lists", icon: "list" },
+  { key: "republicados", icon: "repeat" },
 ];
 
 const MOCK_POSTS = [
@@ -274,16 +274,11 @@ export default function ProfileScreen() {
                 },
               ]}
             >
-              <ThemedText
-                type="body"
-                style={{
-                  color:
-                    activeTab === tab.key ? theme.text : theme.textSecondary,
-                  fontWeight: activeTab === tab.key ? "600" : "400",
-                }}
-              >
-                {tab.label}
-              </ThemedText>
+              <Feather
+                name={tab.icon as any}
+                size={22}
+                color={activeTab === tab.key ? theme.accent : theme.textSecondary}
+              />
             </Pressable>
           ))}
         </View>
