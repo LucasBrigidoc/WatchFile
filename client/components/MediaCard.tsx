@@ -141,14 +141,6 @@ export function MediaCard({
         style={styles.compactImage}
         contentFit="cover"
       />
-      <ThemedText type="small" numberOfLines={1} style={styles.compactTitle}>
-        {title}
-      </ThemedText>
-      <View style={styles.compactInfo}>
-        {rating !== undefined ? (
-          <StarRating rating={rating} size={10} maxRating={5} />
-        ) : null}
-      </View>
     </AnimatedPressable>
   );
 }
