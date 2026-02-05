@@ -14,6 +14,7 @@ interface StarRatingProps {
   onRatingChange?: (rating: number) => void;
   showHalf?: boolean;
   showStars?: boolean;
+  inlineStars?: boolean;
 }
 
 export function StarRating({
@@ -24,6 +25,7 @@ export function StarRating({
   onRatingChange,
   showHalf = true,
   showStars = true,
+  inlineStars = false,
 }: StarRatingProps) {
   const { theme } = useTheme();
 
@@ -81,8 +83,8 @@ export function StarRating({
 
   return (
     <View style={styles.outerContainer}>
-      <View style={styles.container}>
-        <View style={styles.topLabelContainer}>
+      <View style={[styles.container, inlineStars && styles.inlineContainer]}>
+        <View style={[styles.topLabelContainer, inlineStars && styles.inlineLabelContainer]}>
           <FontAwesome 
             name="star" 
             size={size * 0.7} 
@@ -101,7 +103,7 @@ export function StarRating({
         </View>
         {showStars && (
           <View 
-            style={styles.starsContainer}
+            style={[styles.starsContainer, inlineStars && styles.inlineStarsContainer]}
             onStartShouldSetResponder={() => editable}
             onMoveShouldSetResponder={() => editable}
             onResponderGrant={handlePanResponder}
@@ -122,15 +124,25 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
   },
+  inlineContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   starsContainer: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  inlineStarsContainer: {
+    marginLeft: Spacing.sm,
   },
   topLabelContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
+  },
+  inlineLabelContainer: {
+    marginBottom: 0,
   },
   ratingText: {
     ...Typography.body,
