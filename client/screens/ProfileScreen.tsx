@@ -56,13 +56,6 @@ const MOCK_REVIEWS = [
     type: "music" as const,
     rating: 4,
   },
-  {
-    id: "r2",
-    title: "Dune",
-    imageUrl: "https://picsum.photos/seed/mydune/400/400",
-    type: "film" as const,
-    rating: 5,
-  },
 ];
 
 const RATINGS_DISTRIBUTION = [
