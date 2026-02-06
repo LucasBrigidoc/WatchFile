@@ -157,12 +157,16 @@ export default function ProfileScreen() {
               <ThemedText type="small" style={{ fontWeight: "700", color: theme.accent }}>Total: {totalReviews}</ThemedText>
             </View>
           </View>
-          <View style={styles.hoursGrid}>
+          <View style={styles.statsGrid}>
             {CATEGORY_STATS.map((item) => (
-              <View key={item.label} style={styles.hourItem}>
-                <Feather name={item.icon as any} size={20} color={theme.accent} />
-                <ThemedText type="h3" style={styles.hourValue}>{item.count}</ThemedText>
-                <ThemedText type="small" style={{ color: theme.textSecondary }}>{item.label}</ThemedText>
+              <View key={item.label} style={styles.statItem}>
+                <View style={[styles.statIconContainer, { backgroundColor: theme.backgroundSecondary }]}>
+                  <Feather name={item.icon as any} size={16} color={theme.accent} />
+                </View>
+                <View style={styles.statInfo}>
+                  <ThemedText type="small" style={{ color: theme.textSecondary }}>{item.label}</ThemedText>
+                  <ThemedText type="body" style={styles.statCount}>{item.count}</ThemedText>
+                </View>
               </View>
             ))}
           </View>
@@ -462,6 +466,34 @@ const styles = StyleSheet.create({
   ratingCount: {
     width: 20,
     textAlign: "right",
+  },
+  statsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  statItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.03)",
+    padding: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    flex: 1,
+    minWidth: "45%",
+  },
+  statIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: Spacing.sm,
+  },
+  statInfo: {
+    flex: 1,
+  },
+  statCount: {
+    fontWeight: "700",
   },
   hoursGrid: {
     flexDirection: "row",
