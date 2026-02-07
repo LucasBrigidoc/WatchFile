@@ -25,7 +25,7 @@ export interface IStorage {
   getRatingStats(userId: string): Promise<{ distribution: { stars: number; count: number }[]; categoryStats: { category: string; count: number }[] }>;
 
   getLists(userId: string): Promise<(UserList & { itemCount: number })[]>;
-  createList(userId: string, name: string): Promise<UserList>;
+  createList(userId: string, name: string, coverImage?: string): Promise<UserList>;
   deleteList(userId: string, listId: string): Promise<void>;
   getListItems(listId: string): Promise<UserListItem[]>;
   addListItem(listId: string, data: { mediaId: string; mediaType: string; mediaTitle: string; mediaImage?: string }): Promise<UserListItem>;
@@ -163,8 +163,8 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
-  async createList(userId: string, name: string): Promise<UserList> {
-    const result = await db.insert(userLists).values({ userId, name }).returning();
+  async createList(userId: string, name: string, coverImage?: string): Promise<UserList> {
+    const result = await db.insert(userLists).values({ userId, name, coverImage: coverImage || null }).returning();
     return result[0];
   }
 

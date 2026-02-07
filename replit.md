@@ -38,7 +38,16 @@
 - **Frontend**: AuthContext com chamadas reais à API, persistência de token via AsyncStorage, auto-login no startup
 - **Storage**: DatabaseStorage com Drizzle ORM + pg Pool (server/db.ts, server/storage.ts)
 
+## Listas de Mídia
+- **Schema**: Tabela `user_lists` com id, userId, name, coverImage, createdAt; `user_list_items` com id, listId, mediaId, mediaType, mediaTitle, mediaImage, addedAt
+- **Componentes**: CreateListModal (criar lista com nome e capa), SaveToListModal (salvar mídia em lista existente)
+- **Fluxo**: Perfil > Listas > Criar Nova Lista (modal com nome + imagem de capa); MediaDetail > Salvar na Lista > escolher lista ou criar nova
+
 ## Mudanças Recentes (2026-02-07)
+- Implementada funcionalidade completa de listas: criar listas com nome e capa, salvar mídias em listas
+- Criado CreateListModal com seletor de imagem de capa (expo-image-picker)
+- Criado SaveToListModal para salvar mídias em listas existentes ou criar nova lista
+- Adicionado campo coverImage na tabela user_lists
 - Implementado sistema de autenticação completo (registro, login, perfil) com banco de dados real
 - Expandida tabela de usuários com email, nome, bio, avatarUrl, createdAt
 - Criado DatabaseStorage substituindo MemStorage por PostgreSQL real via Drizzle ORM

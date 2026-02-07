@@ -20,6 +20,7 @@ import { PostCard } from "@/components/PostCard";
 import { MediaCard } from "@/components/MediaCard";
 import { GlassCard } from "@/components/GlassCard";
 import { EmptyState } from "@/components/EmptyState";
+import { CreateListModal } from "@/components/CreateListModal";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
@@ -87,6 +88,7 @@ export default function ProfileScreen() {
   const [lists, setLists] = useState<UserList[]>([]);
   const [ratings, setRatings] = useState<UserRating[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateList, setShowCreateList] = useState(false);
 
   const name = user?.name || "User";
   const bio = user?.bio || "Nenhuma bio ainda";
@@ -276,7 +278,7 @@ export default function ProfileScreen() {
       case "lists":
         return (
           <View style={styles.tabContent}>
-            <Pressable style={styles.createListButton}>
+            <Pressable style={styles.createListButton} onPress={() => setShowCreateList(true)}>
               <View
                 style={[
                   styles.createListIcon,
@@ -298,17 +300,25 @@ export default function ProfileScreen() {
               </View>
             </Pressable>
             {lists.length > 0 ? (
-              lists.map((list) => (
+              lists.map((list: any) => (
                 <GlassCard key={list.id} style={styles.listCard}>
                   <View style={styles.listContent}>
-                    <View
-                      style={[
-                        styles.listThumbnail,
-                        { backgroundColor: theme.backgroundSecondary },
-                      ]}
-                    >
-                      <Feather name="list" size={24} color={theme.accent} />
-                    </View>
+                    {list.coverImage ? (
+                      <Image
+                        source={{ uri: list.coverImage }}
+                        style={styles.listThumbnail}
+                        contentFit="cover"
+                      />
+                    ) : (
+                      <View
+                        style={[
+                          styles.listThumbnail,
+                          { backgroundColor: theme.backgroundSecondary, alignItems: "center", justifyContent: "center" },
+                        ]}
+                      >
+                        <Feather name="list" size={24} color={theme.accent} />
+                      </View>
+                    )}
                     <View style={styles.listInfo}>
                       <ThemedText type="body" style={{ fontWeight: "600" }}>
                         {list.name}
@@ -412,6 +422,12 @@ export default function ProfileScreen() {
 
         {renderTabContent()}
       </ScrollView>
+
+      <CreateListModal
+        visible={showCreateList}
+        onClose={() => setShowCreateList(false)}
+        onCreated={fetchProfileData}
+      />
     </View>
   );
 }

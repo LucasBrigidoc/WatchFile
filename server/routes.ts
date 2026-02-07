@@ -250,7 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!userId) return res.status(401).json({ message: "Não autenticado" });
       const parsed = insertListSchema.safeParse(req.body);
       if (!parsed.success) return res.status(400).json({ message: "Dados inválidos" });
-      const list = await storage.createList(userId, parsed.data.name);
+      const list = await storage.createList(userId, parsed.data.name, parsed.data.coverImage);
       res.status(201).json({ list });
     } catch (error) {
       console.error("Create list error:", error);

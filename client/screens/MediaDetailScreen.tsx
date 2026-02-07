@@ -18,8 +18,11 @@ import { MediaTypeBadge, MediaType } from "@/components/MediaTypeBadge";
 import { StarRating } from "@/components/StarRating";
 import { GlassCard } from "@/components/GlassCard";
 import { PostCard } from "@/components/PostCard";
+import { SaveToListModal } from "@/components/SaveToListModal";
+import { CreateListModal } from "@/components/CreateListModal";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
+import { useAuth } from "@/contexts/AuthContext";
 
 export type MediaDetailParams = {
   id: string;
@@ -74,6 +77,8 @@ export default function MediaDetailScreen() {
 
   const [userRating, setUserRating] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showCreateListModal, setShowCreateListModal] = useState(false);
 
   const displayRating = params.rating
     ? params.rating > 5
@@ -87,11 +92,8 @@ export default function MediaDetailScreen() {
   };
 
   const handleSave = () => {
-    setIsSaved(!isSaved);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (!isSaved) {
-      Alert.alert("Salvo!", "Mídia adicionada à sua lista.");
-    }
+    setShowSaveModal(true);
   };
 
   const relatedPosts = MOCK_RELATED_POSTS.map((post) => ({
@@ -223,25 +225,25 @@ export default function MediaDetailScreen() {
               style={[
                 styles.actionBtn,
                 {
-                  backgroundColor: isSaved ? theme.accent : theme.backgroundDefault,
-                  borderColor: isSaved ? theme.accent : theme.border,
+                  backgroundColor: theme.backgroundDefault,
+                  borderColor: theme.border,
                 },
               ]}
             >
               <Feather
-                name={isSaved ? "check" : "bookmark"}
+                name="bookmark"
                 size={18}
-                color={isSaved ? "#0D0D0D" : theme.text}
+                color={theme.text}
               />
               <ThemedText
                 type="small"
                 style={{
-                  color: isSaved ? "#0D0D0D" : theme.text,
+                  color: theme.text,
                   marginLeft: Spacing.sm,
                   fontWeight: "600",
                 }}
               >
-                {isSaved ? "Salvo" : "Salvar na Lista"}
+                Salvar na Lista
               </ThemedText>
             </Pressable>
 
@@ -293,6 +295,27 @@ export default function MediaDetailScreen() {
           </View>
         </View>
       </ScrollView>
+
+      <SaveToListModal
+        visible={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        media={{
+          id: params.id,
+          title: params.title,
+          type: params.type,
+          imageUrl: params.imageUrl,
+        }}
+        onCreateList={() => setShowCreateListModal(true)}
+      />
+
+      <CreateListModal
+        visible={showCreateListModal}
+        onClose={() => setShowCreateListModal(false)}
+        onCreated={() => {
+          setShowCreateListModal(false);
+          setTimeout(() => setShowSaveModal(true), 300);
+        }}
+      />
     </View>
   );
 }

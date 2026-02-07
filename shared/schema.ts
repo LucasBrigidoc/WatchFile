@@ -51,6 +51,7 @@ export const userLists = pgTable("user_lists", {
     .default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id),
   name: text("name").notNull(),
+  coverImage: text("cover_image"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -91,6 +92,7 @@ export const insertRatingSchema = z.object({
 
 export const insertListSchema = z.object({
   name: z.string().min(1),
+  coverImage: z.string().optional(),
 });
 
 export const insertListItemSchema = z.object({
