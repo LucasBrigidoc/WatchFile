@@ -37,4 +37,6 @@
 - Criada tela MediaDetailScreen com detalhes da mídia, avaliação, salvar e posts relacionados
 - Atualizada navegação para incluir rota MediaDetail nos stacks Home e Discover
 - Atualizada DiscoverScreen com cards de largura total e filtros por categoria
+- Atualizada SearchScreen para usar MediaCardFull nos resultados de busca com navegação para detalhes
+- Adicionado mapeamento de gêneros TMDB (IDs para nomes em português)
 - Corrigidos erros LSP pré-existentes em MediaCard.tsx

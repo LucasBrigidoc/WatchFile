@@ -11,12 +11,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Feather } from "@expo/vector-icons";
 
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import { ThemedText } from "@/components/ThemedText";
-import { MediaCard } from "@/components/MediaCard";
+import { MediaCardFull } from "@/components/MediaCardFull";
 import { EmptyState } from "@/components/EmptyState";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { TextInput } from "@/components/TextInput";
+import { DiscoverStackParamList } from "@/navigation/DiscoverStackNavigator";
 
 type MediaType = "all" | "film" | "series" | "music" | "anime" | "manga" | "book";
 
@@ -30,10 +34,22 @@ const FILTERS: { key: MediaType; label: string }[] = [
   { key: "book", label: "Books" },
 ];
 
+const TMDB_GENRES: Record<number, string> = {
+  28: "Ação", 12: "Aventura", 16: "Animação", 35: "Comédia", 80: "Crime",
+  99: "Documentário", 18: "Drama", 10751: "Família", 14: "Fantasia",
+  36: "História", 27: "Terror", 10402: "Música", 9648: "Mistério",
+  10749: "Romance", 878: "Ficção Científica", 10770: "Cinema TV",
+  53: "Thriller", 10752: "Guerra", 37: "Faroeste",
+  10759: "Ação & Aventura", 10762: "Kids", 10763: "News",
+  10764: "Reality", 10765: "Sci-Fi & Fantasia", 10766: "Novela",
+  10767: "Talk", 10768: "War & Politics",
+};
+
 export default function SearchScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const { theme } = useTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<DiscoverStackParamList>>();
   const inputRef = useRef<RNTextInput>(null);
   const [query, setQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<MediaType>("all");
@@ -84,7 +100,11 @@ export default function SearchScreen() {
             : "https://via.placeholder.com/400x600?text=No+Image",
           type: item.media_type === "movie" ? "film" : "series",
           year: (item.release_date || item.first_air_date || "").split("-")[0],
-          rating: item.vote_average / 2,
+          rating: item.vote_average,
+          genre: (item.genre_ids || []).map((id: number) => TMDB_GENRES[id]).filter(Boolean).join(", ") || undefined,
+          overview: item.overview || "",
+          voteCount: item.vote_count || 0,
+          backdrop: item.backdrop_path ? `https://image.tmdb.org/t/p/w780${item.backdrop_path}` : undefined,
         }))];
       }
 
@@ -95,7 +115,10 @@ export default function SearchScreen() {
           imageUrl: item.volumeInfo.imageLinks?.thumbnail?.replace("http://", "https://") || "https://via.placeholder.com/400x600?text=No+Image",
           type: "book",
           year: (item.volumeInfo.publishedDate || "").split("-")[0],
-          rating: item.volumeInfo.averageRating || 0,
+          rating: item.volumeInfo.averageRating ? item.volumeInfo.averageRating * 2 : 0,
+          genre: (item.volumeInfo.categories || []).join(", ") || undefined,
+          overview: item.volumeInfo.description || "",
+          voteCount: item.volumeInfo.ratingsCount || 0,
         }))];
       }
 
@@ -105,8 +128,11 @@ export default function SearchScreen() {
           title: `${item.title} - ${item.artist.name}`,
           imageUrl: item.album.cover_big || item.album.cover_medium || "https://via.placeholder.com/400x400?text=No+Image",
           type: "music",
-          year: "", // Deezer search doesn't provide year directly in top results usually
+          year: "",
           rating: 0,
+          genre: item.artist.name || undefined,
+          overview: `Álbum: ${item.album.title || "Desconhecido"}`,
+          voteCount: 0,
         }))];
       }
 
@@ -117,7 +143,10 @@ export default function SearchScreen() {
           imageUrl: item.images.jpg.large_image_url || item.images.jpg.image_url || "https://via.placeholder.com/400x600?text=No+Image",
           type: "anime",
           year: (item.aired?.from || "").split("-")[0],
-          rating: item.score ? item.score / 2 : 0,
+          rating: item.score || 0,
+          genre: (item.genres || []).map((g: any) => g.name).join(", ") || undefined,
+          overview: item.synopsis || "",
+          voteCount: item.scored_by || 0,
         }))];
       }
 
@@ -128,7 +157,10 @@ export default function SearchScreen() {
           imageUrl: item.images.jpg.large_image_url || item.images.jpg.image_url || "https://via.placeholder.com/400x600?text=No+Image",
           type: "manga",
           year: (item.published?.from || "").split("-")[0],
-          rating: item.score ? item.score / 2 : 0,
+          rating: item.score || 0,
+          genre: (item.genres || []).map((g: any) => g.name).join(", ") || undefined,
+          overview: item.synopsis || "",
+          voteCount: item.scored_by || 0,
         }))];
       }
 
@@ -159,17 +191,33 @@ export default function SearchScreen() {
     }
   };
 
+  const handleMediaPress = (item: any) => {
+    navigation.navigate("MediaDetail", {
+      id: item.id,
+      title: item.title,
+      imageUrl: item.imageUrl,
+      type: item.type,
+      year: item.year,
+      rating: item.rating,
+      genre: item.genre,
+      overview: item.overview,
+      voteCount: item.voteCount,
+      backdrop: item.backdrop,
+    });
+  };
+
   const renderResult = ({ item }: { item: any }) => (
-    <MediaCard
+    <MediaCardFull
       id={item.id}
       title={item.title}
       imageUrl={item.imageUrl}
       type={item.type}
       year={item.year}
       rating={item.rating}
-      variant="full"
-      showFullStars={true}
-      inlineStars={true}
+      genre={item.genre}
+      overview={item.overview}
+      voteCount={item.voteCount}
+      onPress={() => handleMediaPress(item)}
     />
   );
 
