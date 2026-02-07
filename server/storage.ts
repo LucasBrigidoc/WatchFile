@@ -1,12 +1,35 @@
-import { type User, type InsertUser, users } from "@shared/schema";
+import {
+  type User, type InsertUser, users,
+  type UserFavorite, userFavorites,
+  type UserRating, userRatings,
+  type UserList, userLists,
+  type UserListItem, userListItems,
+} from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserBio(userId: string, bio: string): Promise<User | undefined>;
+
+  getFavorites(userId: string): Promise<UserFavorite[]>;
+  setFavorite(userId: string, category: string, title: string, mediaId?: string, mediaImage?: string): Promise<UserFavorite>;
+  deleteFavorite(userId: string, category: string): Promise<void>;
+
+  getRatings(userId: string): Promise<UserRating[]>;
+  upsertRating(userId: string, data: { mediaId: string; mediaType: string; mediaTitle: string; mediaImage?: string; rating: number; comment?: string }): Promise<UserRating>;
+  deleteRating(userId: string, mediaId: string, mediaType: string): Promise<void>;
+  getRatingStats(userId: string): Promise<{ distribution: { stars: number; count: number }[]; categoryStats: { category: string; count: number }[] }>;
+
+  getLists(userId: string): Promise<(UserList & { itemCount: number })[]>;
+  createList(userId: string, name: string): Promise<UserList>;
+  deleteList(userId: string, listId: string): Promise<void>;
+  getListItems(listId: string): Promise<UserListItem[]>;
+  addListItem(listId: string, data: { mediaId: string; mediaType: string; mediaTitle: string; mediaImage?: string }): Promise<UserListItem>;
+  removeListItem(itemId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -28,6 +51,148 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const result = await db.insert(users).values(insertUser).returning();
     return result[0];
+  }
+
+  async updateUserBio(userId: string, bio: string): Promise<User | undefined> {
+    const result = await db.update(users).set({ bio }).where(eq(users.id, userId)).returning();
+    return result[0];
+  }
+
+  async getFavorites(userId: string): Promise<UserFavorite[]> {
+    return db.select().from(userFavorites).where(eq(userFavorites.userId, userId));
+  }
+
+  async setFavorite(userId: string, category: string, title: string, mediaId?: string, mediaImage?: string): Promise<UserFavorite> {
+    const existing = await db.select().from(userFavorites)
+      .where(and(eq(userFavorites.userId, userId), eq(userFavorites.category, category)));
+
+    if (existing.length > 0) {
+      const result = await db.update(userFavorites)
+        .set({ title, mediaId: mediaId || null, mediaImage: mediaImage || null })
+        .where(and(eq(userFavorites.userId, userId), eq(userFavorites.category, category)))
+        .returning();
+      return result[0];
+    }
+
+    const result = await db.insert(userFavorites)
+      .values({ userId, category, title, mediaId: mediaId || null, mediaImage: mediaImage || null })
+      .returning();
+    return result[0];
+  }
+
+  async deleteFavorite(userId: string, category: string): Promise<void> {
+    await db.delete(userFavorites)
+      .where(and(eq(userFavorites.userId, userId), eq(userFavorites.category, category)));
+  }
+
+  async getRatings(userId: string): Promise<UserRating[]> {
+    return db.select().from(userRatings).where(eq(userRatings.userId, userId));
+  }
+
+  async upsertRating(userId: string, data: { mediaId: string; mediaType: string; mediaTitle: string; mediaImage?: string; rating: number; comment?: string }): Promise<UserRating> {
+    const existing = await db.select().from(userRatings)
+      .where(and(
+        eq(userRatings.userId, userId),
+        eq(userRatings.mediaId, data.mediaId),
+        eq(userRatings.mediaType, data.mediaType)
+      ));
+
+    if (existing.length > 0) {
+      const result = await db.update(userRatings)
+        .set({ rating: data.rating, comment: data.comment || "", mediaTitle: data.mediaTitle, mediaImage: data.mediaImage || null })
+        .where(and(
+          eq(userRatings.userId, userId),
+          eq(userRatings.mediaId, data.mediaId),
+          eq(userRatings.mediaType, data.mediaType)
+        ))
+        .returning();
+      return result[0];
+    }
+
+    const result = await db.insert(userRatings)
+      .values({
+        userId,
+        mediaId: data.mediaId,
+        mediaType: data.mediaType,
+        mediaTitle: data.mediaTitle,
+        mediaImage: data.mediaImage || null,
+        rating: data.rating,
+        comment: data.comment || "",
+      })
+      .returning();
+    return result[0];
+  }
+
+  async deleteRating(userId: string, mediaId: string, mediaType: string): Promise<void> {
+    await db.delete(userRatings)
+      .where(and(
+        eq(userRatings.userId, userId),
+        eq(userRatings.mediaId, mediaId),
+        eq(userRatings.mediaType, mediaType)
+      ));
+  }
+
+  async getRatingStats(userId: string): Promise<{ distribution: { stars: number; count: number }[]; categoryStats: { category: string; count: number }[] }> {
+    const allRatings = await db.select().from(userRatings).where(eq(userRatings.userId, userId));
+
+    const distMap: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const catMap: Record<string, number> = {};
+
+    for (const r of allRatings) {
+      distMap[r.rating] = (distMap[r.rating] || 0) + 1;
+      catMap[r.mediaType] = (catMap[r.mediaType] || 0) + 1;
+    }
+
+    const distribution = [5, 4, 3, 2, 1].map(stars => ({ stars, count: distMap[stars] || 0 }));
+    const categoryStats = Object.entries(catMap).map(([category, count]) => ({ category, count }));
+
+    return { distribution, categoryStats };
+  }
+
+  async getLists(userId: string): Promise<(UserList & { itemCount: number })[]> {
+    const lists = await db.select().from(userLists).where(eq(userLists.userId, userId));
+    const result: (UserList & { itemCount: number })[] = [];
+
+    for (const list of lists) {
+      const items = await db.select({ count: sql<number>`count(*)` })
+        .from(userListItems)
+        .where(eq(userListItems.listId, list.id));
+      result.push({ ...list, itemCount: Number(items[0]?.count || 0) });
+    }
+
+    return result;
+  }
+
+  async createList(userId: string, name: string): Promise<UserList> {
+    const result = await db.insert(userLists).values({ userId, name }).returning();
+    return result[0];
+  }
+
+  async deleteList(userId: string, listId: string): Promise<void> {
+    await db.delete(userListItems).where(eq(userListItems.listId, listId));
+    await db.delete(userLists)
+      .where(and(eq(userLists.id, listId), eq(userLists.userId, userId)));
+  }
+
+  async getListItems(listId: string): Promise<UserListItem[]> {
+    return db.select().from(userListItems).where(eq(userListItems.listId, listId));
+  }
+
+  async addListItem(listId: string, data: { mediaId: string; mediaType: string; mediaTitle: string; mediaImage?: string }): Promise<UserListItem> {
+    const result = await db.insert(userListItems)
+      .values({
+        listId,
+        mediaId: data.mediaId,
+        mediaType: data.mediaType,
+        mediaTitle: data.mediaTitle,
+        mediaImage: data.mediaImage || null,
+      })
+      .returning();
+    return result[0];
+  }
+
+  async removeListItem(itemId: string): Promise<void> {
+    await db.delete(userListItems).where(eq(userListItems.id, itemId));
   }
 }
 

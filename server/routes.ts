@@ -3,6 +3,7 @@ import { createServer, type Server } from "node:http";
 import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import { storage } from "./storage";
+import { insertFavoriteSchema, insertRatingSchema, insertListSchema, insertListItemSchema } from "@shared/schema";
 
 const tokens = new Map<string, string>();
 
@@ -13,6 +14,13 @@ function generateToken(): string {
 function sanitizeUser(user: any) {
   const { password, ...safe } = user;
   return safe;
+}
+
+function getUserIdFromToken(req: Request): string | null {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
+  const token = authHeader.split(" ")[1];
+  return tokens.get(token) || null;
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -113,6 +121,191 @@ export async function registerRoutes(app: Express): Promise<Server> {
       tokens.delete(token);
     }
     res.json({ message: "Desconectado com sucesso" });
+  });
+
+  // ---- Profile: Update Bio ----
+  app.put("/api/profile/bio", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const { bio } = req.body;
+      if (typeof bio !== "string") return res.status(400).json({ message: "Bio inválida" });
+      const user = await storage.updateUserBio(userId, bio);
+      if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
+      res.json({ user: sanitizeUser(user) });
+    } catch (error) {
+      console.error("Update bio error:", error);
+      res.status(500).json({ message: "Erro ao atualizar bio" });
+    }
+  });
+
+  // ---- Favorites ----
+  app.get("/api/profile/favorites", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const favorites = await storage.getFavorites(userId);
+      res.json({ favorites });
+    } catch (error) {
+      console.error("Get favorites error:", error);
+      res.status(500).json({ message: "Erro ao buscar favoritos" });
+    }
+  });
+
+  app.put("/api/profile/favorites", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const parsed = insertFavoriteSchema.safeParse(req.body);
+      if (!parsed.success) return res.status(400).json({ message: "Dados inválidos" });
+      const { category, title, mediaId, mediaImage } = parsed.data;
+      const favorite = await storage.setFavorite(userId, category, title, mediaId, mediaImage);
+      res.json({ favorite });
+    } catch (error) {
+      console.error("Set favorite error:", error);
+      res.status(500).json({ message: "Erro ao salvar favorito" });
+    }
+  });
+
+  app.delete("/api/profile/favorites/:category", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      await storage.deleteFavorite(userId, req.params.category as string);
+      res.json({ message: "Favorito removido" });
+    } catch (error) {
+      console.error("Delete favorite error:", error);
+      res.status(500).json({ message: "Erro ao remover favorito" });
+    }
+  });
+
+  // ---- Ratings ----
+  app.get("/api/profile/ratings", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const ratings = await storage.getRatings(userId);
+      res.json({ ratings });
+    } catch (error) {
+      console.error("Get ratings error:", error);
+      res.status(500).json({ message: "Erro ao buscar avaliações" });
+    }
+  });
+
+  app.post("/api/profile/ratings", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const parsed = insertRatingSchema.safeParse(req.body);
+      if (!parsed.success) return res.status(400).json({ message: "Dados inválidos", errors: parsed.error.errors });
+      const rating = await storage.upsertRating(userId, parsed.data);
+      res.json({ rating });
+    } catch (error) {
+      console.error("Upsert rating error:", error);
+      res.status(500).json({ message: "Erro ao salvar avaliação" });
+    }
+  });
+
+  app.delete("/api/profile/ratings/:mediaType/:mediaId", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      await storage.deleteRating(userId, req.params.mediaId as string, req.params.mediaType as string);
+      res.json({ message: "Avaliação removida" });
+    } catch (error) {
+      console.error("Delete rating error:", error);
+      res.status(500).json({ message: "Erro ao remover avaliação" });
+    }
+  });
+
+  // ---- Profile Stats (ratings distribution + category counts) ----
+  app.get("/api/profile/stats", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const stats = await storage.getRatingStats(userId);
+      res.json(stats);
+    } catch (error) {
+      console.error("Get stats error:", error);
+      res.status(500).json({ message: "Erro ao buscar estatísticas" });
+    }
+  });
+
+  // ---- Lists ----
+  app.get("/api/profile/lists", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const lists = await storage.getLists(userId);
+      res.json({ lists });
+    } catch (error) {
+      console.error("Get lists error:", error);
+      res.status(500).json({ message: "Erro ao buscar listas" });
+    }
+  });
+
+  app.post("/api/profile/lists", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const parsed = insertListSchema.safeParse(req.body);
+      if (!parsed.success) return res.status(400).json({ message: "Dados inválidos" });
+      const list = await storage.createList(userId, parsed.data.name);
+      res.status(201).json({ list });
+    } catch (error) {
+      console.error("Create list error:", error);
+      res.status(500).json({ message: "Erro ao criar lista" });
+    }
+  });
+
+  app.delete("/api/profile/lists/:listId", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      await storage.deleteList(userId, req.params.listId as string);
+      res.json({ message: "Lista removida" });
+    } catch (error) {
+      console.error("Delete list error:", error);
+      res.status(500).json({ message: "Erro ao remover lista" });
+    }
+  });
+
+  app.get("/api/profile/lists/:listId/items", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const items = await storage.getListItems(req.params.listId as string);
+      res.json({ items });
+    } catch (error) {
+      console.error("Get list items error:", error);
+      res.status(500).json({ message: "Erro ao buscar itens da lista" });
+    }
+  });
+
+  app.post("/api/profile/lists/:listId/items", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      const parsed = insertListItemSchema.safeParse(req.body);
+      if (!parsed.success) return res.status(400).json({ message: "Dados inválidos" });
+      const item = await storage.addListItem(req.params.listId as string, parsed.data);
+      res.status(201).json({ item });
+    } catch (error) {
+      console.error("Add list item error:", error);
+      res.status(500).json({ message: "Erro ao adicionar item" });
+    }
+  });
+
+  app.delete("/api/profile/lists/:listId/items/:itemId", async (req: Request, res: Response) => {
+    try {
+      const userId = getUserIdFromToken(req);
+      if (!userId) return res.status(401).json({ message: "Não autenticado" });
+      await storage.removeListItem(req.params.itemId as string);
+      res.json({ message: "Item removido" });
+    } catch (error) {
+      console.error("Remove list item error:", error);
+      res.status(500).json({ message: "Erro ao remover item" });
+    }
   });
 
   app.get("/api/movies/trending", async (req, res) => {

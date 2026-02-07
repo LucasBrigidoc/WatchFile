@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getApiUrl } from "@/lib/query-client";
+import { authFetch } from "@/lib/api";
 
 interface User {
   id: string;
@@ -18,35 +18,13 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const TOKEN_KEY = "@culturehub:token";
 const USER_KEY = "@culturehub:user";
-
-async function authFetch(endpoint: string, options: RequestInit = {}) {
-  const baseUrl = getApiUrl();
-  const url = new URL(endpoint, baseUrl);
-
-  const token = await AsyncStorage.getItem(TOKEN_KEY);
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string> || {}),
-  };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const res = await fetch(url.toString(), {
-    ...options,
-    headers,
-  });
-
-  return res;
-}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -127,6 +105,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
+  const updateUser = useCallback((updatedUser: User) => {
+    setUser(updatedUser);
+    AsyncStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
+  }, []);
+
   const logout = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -147,6 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         signUp,
         logout,
+        updateUser,
       }}
     >
       {children}

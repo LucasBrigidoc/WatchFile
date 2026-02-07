@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   View,
   ScrollView,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Avatar } from "@/components/Avatar";
@@ -21,6 +23,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { useAuth } from "@/contexts/AuthContext";
+import { authFetch } from "@/lib/api";
 
 type ProfileTab = "posts" | "reviews" | "lists" | "republicados";
 
@@ -31,63 +34,42 @@ const TABS: { key: ProfileTab; icon: string }[] = [
   { key: "republicados", icon: "repeat" },
 ];
 
-const MOCK_POSTS = [
-  {
-    id: "p1",
-    user: { name: "You", avatarUrl: undefined },
-    media: {
-      title: "Blonde",
-      imageUrl: "https://picsum.photos/seed/myblonde/400/400",
-      type: "music" as const,
-    },
-    rating: 5,
-    comment: "This album changed my life. Absolute masterpiece.",
-    timestamp: "2d ago",
-    likeCount: 24,
-    commentCount: 3,
-  },
-];
+const CATEGORY_LABELS: Record<string, { label: string; icon: string }> = {
+  film: { label: "Filme", icon: "film" },
+  series: { label: "Série", icon: "tv" },
+  music: { label: "Música", icon: "music" },
+  anime: { label: "Anime", icon: "monitor" },
+  manga: { label: "Manga", icon: "book-open" },
+  book: { label: "Livro", icon: "book" },
+};
 
-const MOCK_REVIEWS: any[] = [];
+interface Favorite {
+  id: string;
+  category: string;
+  title: string;
+}
 
-const RATINGS_DISTRIBUTION = [
-  { stars: 5, count: 12 },
-  { stars: 4, count: 8 },
-  { stars: 3, count: 3 },
-  { stars: 2, count: 1 },
-  { stars: 1, count: 0 },
-];
+interface RatingStats {
+  distribution: { stars: number; count: number }[];
+  categoryStats: { category: string; count: number }[];
+}
 
-const CATEGORY_STATS = [
-  { label: "Filme", count: 12, icon: "film" },
-  { label: "Série", count: 8, icon: "tv" },
-  { label: "Música", count: 45, icon: "music" },
-  { label: "Anime", count: 15, icon: "monitor" },
-  { label: "Livro", count: 3, icon: "book" },
-];
+interface UserList {
+  id: string;
+  name: string;
+  itemCount: number;
+}
 
-const FAVORITES = [
-  { label: "Filme", title: "Interstellar", icon: "film" },
-  { label: "Série", title: "Breaking Bad", icon: "tv" },
-  { label: "Música", title: "Blonde", icon: "music" },
-  { label: "Anime", title: "Attack on Titan", icon: "monitor" },
-  { label: "Livro", title: "1984", icon: "book" },
-];
-
-const MOCK_LISTS = [
-  {
-    id: "l1",
-    name: "Favorite Albums",
-    itemCount: 12,
-    thumbnail: "https://picsum.photos/seed/list1/400/400",
-  },
-  {
-    id: "l2",
-    name: "Watch Later",
-    itemCount: 8,
-    thumbnail: "https://picsum.photos/seed/list2/400/400",
-  },
-];
+interface UserRating {
+  id: string;
+  mediaId: string;
+  mediaType: string;
+  mediaTitle: string;
+  mediaImage: string | null;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
 
 export default function ProfileScreen() {
   const { user } = useAuth();
@@ -97,13 +79,82 @@ export default function ProfileScreen() {
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<ProfileTab>("reviews");
 
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [stats, setStats] = useState<RatingStats>({
+    distribution: [5, 4, 3, 2, 1].map(s => ({ stars: s, count: 0 })),
+    categoryStats: [],
+  });
+  const [lists, setLists] = useState<UserList[]>([]);
+  const [ratings, setRatings] = useState<UserRating[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const name = user?.name || "User";
-  const bio = user?.bio || "No bio yet";
+  const bio = user?.bio || "Nenhuma bio ainda";
   const avatarUrl = user?.avatarUrl;
 
-  const renderStatsSection = () => {
-    const totalReviews = CATEGORY_STATS.reduce((sum, item) => sum + item.count, 0);
+  const fetchProfileData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [favRes, statsRes, listsRes, ratingsRes] = await Promise.all([
+        authFetch("/api/profile/favorites"),
+        authFetch("/api/profile/stats"),
+        authFetch("/api/profile/lists"),
+        authFetch("/api/profile/ratings"),
+      ]);
 
+      if (favRes.ok) {
+        const data = await favRes.json();
+        setFavorites(data.favorites || []);
+      }
+      if (statsRes.ok) {
+        const data = await statsRes.json();
+        setStats(data);
+      }
+      if (listsRes.ok) {
+        const data = await listsRes.json();
+        setLists(data.lists || []);
+      }
+      if (ratingsRes.ok) {
+        const data = await ratingsRes.json();
+        setRatings(data.ratings || []);
+      }
+    } catch (error) {
+      console.error("Error loading profile data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfileData();
+    }, [fetchProfileData])
+  );
+
+  const totalRatings = stats.distribution.reduce((sum, item) => sum + item.count, 0);
+  const maxCount = Math.max(...stats.distribution.map(d => d.count), 1);
+
+  const allCategories = [
+    { key: "film", label: "Filme", icon: "film" },
+    { key: "series", label: "Série", icon: "tv" },
+    { key: "music", label: "Música", icon: "music" },
+    { key: "anime", label: "Anime", icon: "monitor" },
+    { key: "book", label: "Livro", icon: "book" },
+  ];
+
+  const favCategories = allCategories.map(cat => {
+    const fav = favorites.find(f => f.category === cat.key);
+    return { ...cat, title: fav?.title || "—" };
+  });
+
+  const categoryStatsDisplay = allCategories.map(cat => {
+    const stat = stats.categoryStats.find(s => s.category === cat.key);
+    return { ...cat, count: stat?.count || 0 };
+  });
+
+  const totalCategoryCount = categoryStatsDisplay.reduce((sum, c) => sum + c.count, 0);
+
+  const renderStatsSection = () => {
     return (
       <View style={styles.statsSection}>
         <GlassCard style={styles.statsCard}>
@@ -115,34 +166,34 @@ export default function ProfileScreen() {
 
         <GlassCard style={styles.statsCard}>
           <ThemedText type="body" style={styles.statsTitle}>Meus Favoritos</ThemedText>
-          {FAVORITES.map((item) => (
-            <View key={item.label} style={styles.favoriteRow}>
+          {favCategories.map((item) => (
+            <View key={item.key} style={styles.favoriteRow}>
               <View style={styles.favoriteLabel}>
                 <Feather name={item.icon as any} size={16} color={theme.textSecondary} />
                 <ThemedText type="small" style={{ marginLeft: 8, color: theme.textSecondary }}>{item.label}</ThemedText>
               </View>
-              <ThemedText type="body" style={styles.favoriteTitle}>{item.title}</ThemedText>
+              <ThemedText type="body" style={[styles.favoriteTitle, item.title === "—" && { color: theme.textSecondary }]}>{item.title}</ThemedText>
             </View>
           ))}
         </GlassCard>
 
         <GlassCard style={styles.statsCard}>
           <ThemedText type="body" style={styles.statsTitle}>Avaliações</ThemedText>
-          {RATINGS_DISTRIBUTION.map((item) => (
+          {stats.distribution.map((item) => (
             <View key={item.stars} style={styles.ratingRow}>
               <View style={styles.starsLabel}>
                 <ThemedText type="small">{item.stars}</ThemedText>
                 <Feather name="star" size={12} color={theme.star} style={{ marginLeft: 4 }} />
               </View>
               <View style={styles.progressBarContainer}>
-                <View 
+                <View
                   style={[
-                    styles.progressBar, 
-                    { 
-                      backgroundColor: theme.accent, 
-                      width: `${(item.count / 24) * 100}%` 
+                    styles.progressBar,
+                    {
+                      backgroundColor: theme.accent,
+                      width: `${totalRatings > 0 ? (item.count / maxCount) * 100 : 0}%`
                     }
-                  ]} 
+                  ]}
                 />
               </View>
               <ThemedText type="small" style={styles.ratingCount}>{item.count}</ThemedText>
@@ -155,8 +206,8 @@ export default function ProfileScreen() {
             <ThemedText type="body" style={{ fontWeight: "600" }}>Quantidade por Categoria</ThemedText>
           </View>
           <View style={styles.statsGrid}>
-            {CATEGORY_STATS.map((item) => (
-              <View key={item.label} style={styles.statItem}>
+            {categoryStatsDisplay.map((item) => (
+              <View key={item.key} style={styles.statItem}>
                 <View style={[styles.statIconContainer, { backgroundColor: theme.backgroundSecondary }]}>
                   <Feather name={item.icon as any} size={16} color={theme.accent} />
                 </View>
@@ -172,7 +223,7 @@ export default function ProfileScreen() {
               </View>
               <View style={styles.statInfo}>
                 <ThemedText type="small" style={{ color: theme.textSecondary }}>Total</ThemedText>
-                <ThemedText type="body" style={styles.statCount}>{totalReviews}</ThemedText>
+                <ThemedText type="body" style={styles.statCount}>{totalCategoryCount}</ThemedText>
               </View>
             </View>
           </View>
@@ -182,29 +233,21 @@ export default function ProfileScreen() {
   };
 
   const renderTabContent = () => {
+    if (loading) {
+      return (
+        <View style={{ padding: Spacing["2xl"], alignItems: "center" }}>
+          <ActivityIndicator color={theme.accent} />
+        </View>
+      );
+    }
+
     switch (activeTab) {
       case "posts":
-        return MOCK_POSTS.length > 0 ? (
-          <View style={styles.tabContent}>
-            {MOCK_POSTS.map((post) => (
-              <PostCard
-                key={post.id}
-                id={post.id}
-                user={{ name: name, avatarUrl: avatarUrl }}
-                media={post.media}
-                rating={post.rating}
-                comment={post.comment}
-                timestamp={post.timestamp}
-                likeCount={post.likeCount}
-                commentCount={post.commentCount}
-              />
-            ))}
-          </View>
-        ) : (
+        return (
           <EmptyState
             type="posts"
-            title="No posts yet"
-            message="Share your thoughts on what you've been consuming."
+            title="Nenhum post ainda"
+            message="Compartilhe suas opiniões sobre o que você está consumindo."
           />
         );
 
@@ -212,15 +255,15 @@ export default function ProfileScreen() {
         return (
           <View style={styles.reviewsContainer}>
             {renderStatsSection()}
-            {MOCK_REVIEWS.length > 0 && (
+            {ratings.length > 0 && (
               <View style={styles.reviewsGrid}>
-                {MOCK_REVIEWS.map((item) => (
+                {ratings.map((item) => (
                   <MediaCard
                     key={item.id}
-                    id={item.id}
-                    title={item.title}
-                    imageUrl={item.imageUrl}
-                    type={item.type}
+                    id={item.mediaId}
+                    title={item.mediaTitle}
+                    imageUrl={item.mediaImage || "https://via.placeholder.com/150x220?text=No+Image"}
+                    type={item.mediaType as any}
                     rating={item.rating}
                     variant="compact"
                   />
@@ -231,7 +274,7 @@ export default function ProfileScreen() {
         );
 
       case "lists":
-        return MOCK_LISTS.length > 0 ? (
+        return (
           <View style={styles.tabContent}>
             <Pressable style={styles.createListButton}>
               <View
@@ -244,61 +287,63 @@ export default function ProfileScreen() {
               </View>
               <View style={styles.createListText}>
                 <ThemedText type="body" style={{ fontWeight: "600" }}>
-                  Create New List
+                  Criar Nova Lista
                 </ThemedText>
                 <ThemedText
                   type="small"
                   style={{ color: theme.textSecondary }}
                 >
-                  Organize your favorite media
+                  Organize suas mídias favoritas
                 </ThemedText>
               </View>
             </Pressable>
-            {MOCK_LISTS.map((list) => (
-              <GlassCard key={list.id} style={styles.listCard}>
-                <View style={styles.listContent}>
-                  <View
-                    style={[
-                      styles.listThumbnail,
-                      { backgroundColor: theme.backgroundSecondary },
-                    ]}
-                  >
-                    <Feather name="list" size={24} color={theme.accent} />
-                  </View>
-                  <View style={styles.listInfo}>
-                    <ThemedText type="body" style={{ fontWeight: "600" }}>
-                      {list.name}
-                    </ThemedText>
-                    <ThemedText
-                      type="small"
-                      style={{ color: theme.textSecondary }}
+            {lists.length > 0 ? (
+              lists.map((list) => (
+                <GlassCard key={list.id} style={styles.listCard}>
+                  <View style={styles.listContent}>
+                    <View
+                      style={[
+                        styles.listThumbnail,
+                        { backgroundColor: theme.backgroundSecondary },
+                      ]}
                     >
-                      {list.itemCount} items
-                    </ThemedText>
+                      <Feather name="list" size={24} color={theme.accent} />
+                    </View>
+                    <View style={styles.listInfo}>
+                      <ThemedText type="body" style={{ fontWeight: "600" }}>
+                        {list.name}
+                      </ThemedText>
+                      <ThemedText
+                        type="small"
+                        style={{ color: theme.textSecondary }}
+                      >
+                        {list.itemCount} itens
+                      </ThemedText>
+                    </View>
+                    <Feather
+                      name="chevron-right"
+                      size={20}
+                      color={theme.textSecondary}
+                    />
                   </View>
-                  <Feather
-                    name="chevron-right"
-                    size={20}
-                    color={theme.textSecondary}
-                  />
-                </View>
-              </GlassCard>
-            ))}
+                </GlassCard>
+              ))
+            ) : (
+              <EmptyState
+                type="lists"
+                title="Nenhuma lista ainda"
+                message="Crie listas personalizadas para organizar suas mídias."
+              />
+            )}
           </View>
-        ) : (
-          <EmptyState
-            type="lists"
-            title="No lists yet"
-            message="Create custom lists to organize your media."
-          />
         );
 
       case "republicados":
         return (
           <EmptyState
             type="status"
-            title="No status updates"
-            message="Mark media as 'Want', 'Consuming', or 'Completed' to track here."
+            title="Nenhuma atualização"
+            message="Marque mídias como 'Quero', 'Consumindo' ou 'Completo' para acompanhar aqui."
           />
         );
 
@@ -336,9 +381,9 @@ export default function ProfileScreen() {
             {name}
           </ThemedText>
 
-          <View style={styles.stats}>
-            <StatCard value={0} label="Reviews" />
-            <StatCard value={0} label="Ratings" />
+          <View style={styles.statsHeader}>
+            <StatCard value={totalRatings} label="Reviews" />
+            <StatCard value={totalRatings} label="Ratings" />
             <StatCard value={0} label="Followers" />
           </View>
         </View>
@@ -385,13 +430,11 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  content: {
-    // No paddingHorizontal here as banner is full width
-  },
+  content: {},
   header: {
     alignItems: "center",
     paddingHorizontal: Spacing.lg,
-    marginTop: -40, // Pull up to overlap banner
+    marginTop: -40,
     marginBottom: Spacing["2xl"],
   },
   avatarWrapper: {
@@ -402,10 +445,7 @@ const styles = StyleSheet.create({
   name: {
     marginTop: Spacing.sm,
   },
-  bio: {
-    marginTop: Spacing.xs,
-  },
-  stats: {
+  statsHeader: {
     flexDirection: "row",
     gap: Spacing.md,
     marginTop: Spacing.xl,
@@ -500,20 +540,6 @@ const styles = StyleSheet.create({
   },
   statCount: {
     fontWeight: "700",
-  },
-  hoursGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.lg,
-    justifyContent: "space-between",
-  },
-  hourItem: {
-    alignItems: "center",
-    minWidth: "30%",
-  },
-  hourValue: {
-    fontWeight: "700",
-    marginTop: Spacing.xs,
   },
   favoriteRow: {
     flexDirection: "row",
